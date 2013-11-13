@@ -36,9 +36,9 @@
                     </tr>   
 <%
 		String mysJDBCDriver = "com.mysql.jdbc.Driver"; 
-		String mysURL = "jdbc:mysql://sbcstldb.cs.stonybrook.edu:3306/cse305ta"; 
-		String mysUserID = "cse305ta"; 
-		String mysPassword = "107724115";
+		String mysURL = "jdbc:mysql://mysql2.cs.stonybrook.edu:3306/jlapine"; 
+		String mysUserID = "jlapine"; 
+		String mysPassword = "108172577";
         
         String stuId = ""+session.getValue("login");
   			java.sql.Connection conn=null;

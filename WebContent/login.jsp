@@ -8,9 +8,9 @@
 		String username = request.getParameter("username");
 		String userpasswd = request.getParameter("userpasswd");
      	String mysJDBCDriver = "com.mysql.jdbc.Driver"; 
-     	String mysURL = "jdbc:mysql://sbcstldb.cs.stonybrook.edu:3306/cse305ta"; 
-     	String mysUserID = "cse305ta"; 
-    	String mysPassword = "107724115";
+     	String mysURL = "jdbc:mysql://mysql2.cs.stonybrook.edu:3306/jlapine"; 
+     	String mysUserID = "jlapine"; 
+    	String mysPassword = "108172577";
     	
 	session.putValue("login","");
 	if ((username!=null) &&(userpasswd!=null))
