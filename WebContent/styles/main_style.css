@@ -22,3 +22,7 @@ html {
 input.input-error {
 	border: 2px solid yellow;
 }
+
+.hover-hand:hover {
+	cursor: pointer;
+}
