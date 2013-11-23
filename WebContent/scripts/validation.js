@@ -12,12 +12,17 @@ function validateString(input) {
 
 // Validate password (must be at least 6 chars long and contain no spaces)
 function validatePassword(input) { 
-    return input.length > 5 && (input.indexOf(" ") == -1) && validateString(input);
+    return input.length > 5 && input.length <=50 && (input.indexOf(" ") == -1) && validateString(input);
+}
+
+// Validate a first or last name
+function validateName(input) {
+	return input.length > 2 && input.length <= 50;
 }
 
 // Validate email
 function validateEmail(input) {
-    return input.match(emailRegex);
+    return input.match(emailRegex) && input.length <= 50;
 }
 
 //Make sure this char is valid (space,0-9,a-z,A-Z)

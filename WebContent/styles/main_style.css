@@ -19,6 +19,18 @@ html {
 	text-align: center;
 }
 
+.main-layout {
+	width: 1000px; 
+	margin: 50px auto; 
+	padding: 20px; 
+	background: white; 
+	-moz-box-shadow: 0 0 20px black; 
+	-webkit-box-shadow: 0 0 20px black; 
+	box-shadow: 0 0 20px black; 
+	text-align: center;
+}
+
+
 input.input-error {
 	border: 2px solid yellow;
 }
@@ -26,3 +38,4 @@ input.input-error {
 .hover-hand:hover {
 	cursor: pointer;
 }
+

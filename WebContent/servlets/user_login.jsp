@@ -9,6 +9,7 @@
 	String password = request.getParameter("password");
 	// Remove session variables
 	session.removeValue(SessionConstants.USERID);
+	session.removeValue(SessionConstants.USERNAME);
 	session.removeValue(SessionConstants.ERROR);
 	if((username != null) && (password!= null)) {
     	// Get a connection to the database
@@ -20,6 +21,7 @@
 				if(result.next()) {
 			    	// Successful log in
 			    	session.putValue(SessionConstants.USERID, "" + result.getInt("User_Id"));  
+					session.putValue(SessionConstants.USERNAME, "" + result.getString("Email_Address"));
 				}
 				else {
 			    	session.putValue(SessionConstants.ERROR, "Invalid username / password.");
