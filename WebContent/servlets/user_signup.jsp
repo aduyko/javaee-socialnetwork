@@ -16,7 +16,6 @@
 	if((username != null) && (password!= null) && (fname != null) && (lname!= null)) {
     	// Get a connection to the database
     	Connection conn = database.Database.getConnection();
-    	conn.setAutoCommit(true);
     	if (conn != null) {
 			try {
 				Statement stat = conn.createStatement();

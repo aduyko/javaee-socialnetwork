@@ -27,7 +27,6 @@ public class Database {
 			sysprops.put("user", DATABASE_USERNAME);
 			sysprops.put("password", DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(DATABASE_URL, sysprops);
-			conn.setAutoCommit(false);
 	    }
 	    catch(Exception e) {
 		try {
