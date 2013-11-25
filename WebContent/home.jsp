@@ -149,6 +149,10 @@
 	<a href="#"> View my messages </a>
 	<br />
 	<a href="#"> Change my account settings </a>
+	<br />
+	<a href="#"> View my circles </a>
+	<br />
+	<a href="#"> Search for users  </a>
 
 </div>
 <%
