@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 
 
 /**
- * A database object used to execute database querries.
+ * A database object used to execute database queries.
  * 
  * @author Jamie Lapine
  */
