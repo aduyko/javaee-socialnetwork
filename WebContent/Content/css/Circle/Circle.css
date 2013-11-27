@@ -1,0 +1,322 @@
+/*
+ * Style for Circle.jsp
+ *
+ * @Author James C. Porcelli
+ */
+div.CircleHeader {
+	height: 10%;
+	clear: both;
+	padding-bottom: 30px;
+	margin-right: 25px;
+	margin-left: 25px;
+}
+
+div.CircleHeader div.CircleSearch {
+	
+}
+
+div.CircleHeader div.CircleSearch form.CircleSearchForm div.CircleSearchFormDiv span.CircleSearchLabel
+	{
+	background: #dedede;
+	color: #fff;
+}
+
+div.CircleCentral {
+	float: left;
+	width: 67%;
+	margin-bottom: 35px;
+}
+
+div.CircleCentral div.UserSearch {
+	padding-bottom: 15px;
+}
+
+div.CircleCentral div.UserPost {
+	padding: 5px;
+}
+
+div.CircleCentral div.UserPost div.UserPostSubmit {
+	background: #dedede;
+	width: 517px;
+	padding: 3px;
+	border-left: 1px solid #aeaeae;
+	border-right: 1px solid #aeaeae;
+	border-bottom: 1px solid #aeaeae;
+}
+
+div.UserSearch button.SubmitUserSearch:hover {
+	margin-left: 30%;
+	margin-right: 30%;
+	width: 10%;
+	zoom: 1;
+	z-index: 900;
+	background: #f8f8f8;
+	border: 1px solid #aaaaaa;
+	border-radius: 2px;
+	cursor: default !important;
+	display: inline-block;
+	font-weight: bold;
+	height: 29px;
+	line-height: 29px;
+	min-width: 54px;
+	padding: 0 8px;
+	text-align: center;
+	text-decoration: none !important;
+	font-size: 11px;
+}
+
+div.UserSearch button.SubmitUserSearch {
+	margin-left: 30%;
+	margin-right: 30%;
+	width: 10%;
+	background: #f5f5f5;
+	border: 1px solid #CCCCCC;
+	border-radius: 2px;
+	cursor: default !important;
+	display: inline-block;
+	font-weight: bold;
+	height: 29px;
+	line-height: 29px;
+	min-width: 54px;
+	padding: 0 8px;
+	text-align: center;
+	text-decoration: none !important;
+	font-size: 11px;
+}
+
+div.CircleCentral div.CircleBody {
+	border-right: 1px solid #dedede;
+	border-left: 1px solid #dedede;
+	border-bottom: 1px solid #dedede;
+	border-top: 1px solid #dedede;
+	min-height: 450px;
+}
+
+div.CircleCentral div.CircleBody div.CircleBodyHeader {
+	padding: 5px;
+	width: 517px;
+}
+
+div.CircleCentral div.CircleBody div.CircleBodyHeader a.inactive {
+	border-left: 1px solid #aeaeae;
+	border-bottom: 1px solid #9a9a9a;
+	background: #dedede;
+	font-weight: bold;
+	padding: 3px;
+	float: left;
+}
+
+div.CircleCentral div.CircleBody div.CircleBodyHeader a.active {
+	border-left: 1px solid #aeaeae;
+	background: #fff;
+	font-weight: bold;
+	padding: 3px;
+	float: left;
+}
+
+div.CircleSideBarLeft {
+	margin-left: 25px;
+	float: left;
+	width: 15%;
+}
+
+div.CircleSideBarLeft div.CurrentUser span {
+	
+}
+
+div.CircleSideBarLeft div.CirclesListOwner {
+	margin-top: 75px;
+	padding-top: 15px;
+}
+
+div.CircleSideBarLeft div.CirclesListOwner ul.OwnerList {
+	list-style-type: none;
+	margin-left: -20px;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList {
+	list-style-type: none;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv
+	{
+	
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments
+	{
+	
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList
+	{
+	list-style-type: none;
+	margin-left: -40px;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList li div.CommentDiv
+	{
+	background: #efefef;
+	width: 400px;
+	margin-bottom: 1px;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.WriteCommentDiv
+	{
+	background: #efefef;
+	width: 400px;
+	margin-bottom: 1px;
+	height: 40px;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.WriteCommentDiv input.WriteComment
+	{
+	margin-top: 5px;
+	height: 30px;
+	vertical-align: middle;
+	width: 85%;
+	margin-left: 7%;
+	margin-right: 7%;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList li div.CommentDiv span.PeopleCommentLikeList
+	{
+	margin-left: 3px;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList li div.CommentDiv span.PeopleCommentLikeList:hover
+	{
+	
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList li div.CommentDiv span.LikeComment
+	{
+	color: #428bca;
+	font-size: small;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList li div.CommentDiv span.LikeComment:hover
+	{
+	cursor: pointer;
+	text-decoration: underline;
+	color: #2a6496;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivOptions
+	{
+	
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostLikes
+	{
+	background: #efefef;
+	width: 400px;
+	margin-bottom: 1px;
+	font-size: small;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostLikes span.PeoplePostLikeList
+	{
+	color: #428bca;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostLikes span.PeoplePostLikeList:hover
+	{
+	cursor: pointer;
+	text-decoration: underline;
+	color: #2a6496;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivOptions span.LikePost
+	{
+	color: #428bca;
+	font-size: small;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivOptions span.PostComment
+	{
+	color: #428bca;
+	font-size: small;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivOptions span.LikePost:hover
+	{
+	cursor: pointer;
+	text-decoration: underline;
+	color: #2a6496;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivOptions span.PostComment:hover
+	{
+	cursor: pointer;
+	text-decoration: underline;
+	color: #2a6496;
+}
+
+div.CircleSideBarLeft div.CirclesListOwner ul.OwnerList li.OwnerCircle {
+	list-style-type: none;
+	padding: 3px;
+	margin-right: 5px;
+}
+
+div.CircleSideBarLeft div.CirclesListOwner ul.OwnerList li.OwnerCircle:hover
+	{
+	list-style-type: none;
+	background: #dedede;
+	padding: 3px;
+	margin-right: 5px;
+	cursor: pointer
+}
+
+div.CircleSideBarLeft div.CirclesListMember {
+	margin-top: 25px;
+	padding-top: 15px;
+}
+
+div.CircleSideBarLeft div.CirclesListMember ul.MemberList {
+	list-style-type: none;
+	margin-left: -20px;
+}
+
+div.CircleSideBarLeft div.CirclesListMember ul.MemberList li.MemberCircle
+	{
+	list-style-type: none;
+	padding: 3px;
+	margin-right: 5px;
+}
+
+div.CircleSideBarLeft div.CirclesListMember ul.MemberList li.MemberCircle:hover
+	{
+	list-style-type: none;
+	background: #dedede;
+	padding: 3px;
+	margin-right: 5px;
+	cursor: pointer;
+}
+
+div.CircleSideBarLeft div.CirclesListOwner span.ListTitle {
+	font-family: "Sans-serif";
+	color: #aeaeae;
+	margin-left: 5px;
+}
+
+div.CircleSideBarLeft div.CirclesListMember span.ListTitle {
+	font-family: "Sans-serif";
+	color: #aeaeae;
+	margin-left: 5px;
+}
+
+div.CircleSideBarRight {
+	margin-right: 25px;
+	float: left;
+	width: 13%;
+}
+
+div.CircleFooter {
+	height: 5%;
+	clear: both;
+	background: #dedede;
+	width: 100%;
+	border: 1px solid #aeaeae;
+	height: 35px;
+}
