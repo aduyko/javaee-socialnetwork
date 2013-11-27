@@ -5,8 +5,8 @@
 <%@page import="constants.SessionConstants" %>
 <%
 	// Get the username and password
-	String username = (String)request.getAttribute("username");
-	String password = (String)request.getAttribute("password");
+	String username = (String)request.getParameter("username");
+	String password = (String)request.getParameter("password");
 	// Remove session variables
 	session.removeAttribute(SessionConstants.USERID);
 	session.removeAttribute(SessionConstants.USERNAME);

@@ -103,9 +103,11 @@
 	<form id="login_form" action="servlets/user_login.jsp" method="post">
 		<input id="email" name="username" placeholder="Email" type="text">
 		<input id="password" name="password" placeholder="Password" type="password">
-		<br/>
-		<a id="btn_create_account" class="hover-hand">Create Account</a>
-		<a id="btn_login" class="hover-hand">Log In</a>
+		<a id="btn_login" class="button">Log In</a>
+		<br />
+		<br />
+		<br />
+		<a id="btn_create_account" class="button">Create Account</a>
 	</form>
 	
 	<form id="signup_form" action="servlets/user_signup.jsp" method="post" style="display:none;">
@@ -119,9 +121,14 @@
 		<br />
 		<input id="confirm_password_signup" name="confirm_password" placeholder="Confirm Password" type="password">
 		<br />
-		<a id="btn_signup" class="hover-hand">Sign Up</a>
-		<a id="btn_switch_login" class="hover-hand">I already have an account</a>
+		<br />
+		<a id="btn_signup" class="button">Sign Up</a>
+		<br />
+		<br />
+		<br />
+		<a href="#" id="btn_switch_login">I already have an account</a>
 	</form>
+	
 <%
 	String error = (String)session.getAttribute(SessionConstants.ERROR);
 	session.removeAttribute(SessionConstants.ERROR);
@@ -142,10 +149,8 @@
 	
 	<h3>Welcome <%= username %>!</h3>
 	<!-- User is logged in, display logged in home page -->
-	<form id="logout_form" action="servlets/user_logout.jsp" method="post">
-		<a id="btn_logout" class="hover-hand">Log Out</a>
-	</form>
-	
+	<a href="servlets/user_logout.jsp" class="button">Log Out</a>
+	<br />
 	<a href="#"> View my messages </a>
 	<br />
 	<a href="#"> Change my account settings </a>
