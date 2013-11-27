@@ -1,6 +1,6 @@
 <%@page import="constants.SessionConstants" %>
 <%
-	session.removeValue(SessionConstants.USERID);
-	session.removeValue(SessionConstants.USERNAME);
+	session.removeAttribute(SessionConstants.USERID);
+	session.removeAttribute(SessionConstants.USERNAME);
 	response.sendRedirect("../home.jsp"); 
 %>

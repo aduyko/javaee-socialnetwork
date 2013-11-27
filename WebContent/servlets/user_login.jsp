@@ -5,12 +5,12 @@
 <%@page import="constants.SessionConstants" %>
 <%
 	// Get the username and password
-	String username = request.getParameter("username");
-	String password = request.getParameter("password");
+	String username = (String)request.getAttribute("username");
+	String password = (String)request.getAttribute("password");
 	// Remove session variables
-	session.removeValue(SessionConstants.USERID);
-	session.removeValue(SessionConstants.USERNAME);
-	session.removeValue(SessionConstants.ERROR);
+	session.removeAttribute(SessionConstants.USERID);
+	session.removeAttribute(SessionConstants.USERNAME);
+	session.removeAttribute(SessionConstants.ERROR);
 	if((username != null) && (password!= null)) {
     	// Get a connection to the database
     	Connection conn = database.Database.getConnection();
@@ -20,15 +20,15 @@
 				ResultSet result = stat.executeQuery("Select * from User where Email_Address='" + username + "' and Password='" + password + "'");
 				if(result.next()) {
 			    	// Successful log in
-			    	session.putValue(SessionConstants.USERID, "" + result.getInt("User_Id"));  
-					session.putValue(SessionConstants.USERNAME, "" + result.getString("Email_Address"));
+			    	session.setAttribute(SessionConstants.USERID, result.getInt("User_Id"));  
+					session.setAttribute(SessionConstants.USERNAME, "" + result.getString("Email_Address"));
 				}
 				else {
-			    	session.putValue(SessionConstants.ERROR, "Invalid username / password.");
+			    	session.setAttribute(SessionConstants.ERROR, "Invalid username / password.");
 				}
 			}
 			catch(Exception e) {
-		    	session.putValue(SessionConstants.ERROR, "Error logging in.");
+		    	session.setAttribute(SessionConstants.ERROR, "Error logging in.");
 			}
 			finally{
 		    	try {
@@ -39,7 +39,7 @@
 		}
 	}
 	else {
-	    session.putValue(SessionConstants.ERROR, "Error logging in.");
+	    session.setAttribute(SessionConstants.ERROR, "Error logging in.");
 	}
 	response.sendRedirect("../home.jsp"); 
 %>

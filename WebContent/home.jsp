@@ -91,8 +91,8 @@
 </head>
 <body>
 <%
-	String userid =  (String)session.getValue(SessionConstants.USERID);
-	String username = (String)session.getValue(SessionConstants.USERNAME);
+	Integer userid =  (Integer)session.getAttribute(SessionConstants.USERID);
+	String username = (String)session.getAttribute(SessionConstants.USERNAME);
 	if((userid == null) || (username == null)) {
 %>
 <div class="float-center">
@@ -123,8 +123,8 @@
 		<a id="btn_switch_login" class="hover-hand">I already have an account</a>
 	</form>
 <%
-	String error = (String)session.getValue(SessionConstants.ERROR);
-	session.removeValue(SessionConstants.ERROR);
+	String error = (String)session.getAttribute(SessionConstants.ERROR);
+	session.removeAttribute(SessionConstants.ERROR);
 	if(error != null){
 %>
 	<div class="error"><%=error%></div>

@@ -10,9 +10,9 @@
 	String fname = request.getParameter("first_name");
 	String lname = request.getParameter("last_name");
 	// Remove session variables
-	session.removeValue(SessionConstants.USERID);
-	session.removeValue(SessionConstants.USERNAME);
-	session.removeValue(SessionConstants.ERROR);
+	session.removeAttribute(SessionConstants.USERID);
+	session.removeAttribute(SessionConstants.USERNAME);
+	session.removeAttribute(SessionConstants.ERROR);
 	if((username != null) && (password!= null) && (fname != null) && (lname!= null)) {
     	// Get a connection to the database
     	Connection conn = database.Database.getConnection();
@@ -27,19 +27,19 @@
 			    	// Get the userId of the user you just created
 					if(result.next()) {
 					    // Sucessfully created, log user in.
-					    session.putValue(SessionConstants.USERID, "" + result.getInt("User_Id"));
-						session.putValue(SessionConstants.USERNAME, result.getString("Email_Address"));
+					    session.setAttribute(SessionConstants.USERID, "" + result.getInt("User_Id"));
+						session.setAttribute(SessionConstants.USERNAME, result.getString("Email_Address"));
 					}
 					else {
-					    session.putValue(SessionConstants.ERROR, "Error creating account.");
+					    session.setAttribute(SessionConstants.ERROR, "Error creating account.");
 					}
 				}
 				else {
-			    	session.putValue(SessionConstants.ERROR, "An account with this email address already exists");
+			    	session.setAttribute(SessionConstants.ERROR, "An account with this email address already exists");
 				}
 			}
 			catch(Exception e) {
-		    	session.putValue(SessionConstants.ERROR, "Error creating account.");
+		    	session.setAttribute(SessionConstants.ERROR, "Error creating account.");
 			}
 			finally{
 		    	try {
@@ -50,7 +50,7 @@
 		}
 	}
 	else {
-	    session.putValue(SessionConstants.ERROR, "Error creating account.");
+	    session.setAttribute(SessionConstants.ERROR, "Error creating account.");
 	}
 	response.sendRedirect("../home.jsp"); 
 %>
