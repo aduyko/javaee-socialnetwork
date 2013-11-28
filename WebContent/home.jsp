@@ -111,16 +111,48 @@
 	</form>
 	
 	<form id="signup_form" action="servlets/user_signup.jsp" method="post" style="display:none;">
-		<input id="fname_signup" name="first_name" placeholder="First Name" type="text">
-		<br />
-		<input id="lname_signup" name="last_name" placeholder="Last Name" type="text">
-		<br />
-		<input id="email_signup" name="username" placeholder="Email" type="text">
-		<br />
-		<input id="password_signup" name="password" placeholder="Password" type="password">
-		<br />
-		<input id="confirm_password_signup" name="confirm_password" placeholder="Confirm Password" type="password">
-		<br />
+		<table style="margin:20px auto; text-align:left">
+			<tr>
+				<td>
+					First Name:
+				</td>
+				<td>
+					<input id="fname_signup" name="first_name" placeholder="First Name" type="text" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Last Name:
+				</td>
+				<td>
+					<input id="lname_signup" name="last_name" placeholder="Last Name" type="text" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Email:
+				</td>
+				<td>
+					<input id="email_signup" name="username" placeholder="Email" type="text">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Password:
+				</td>
+				<td>
+					<input id="password_signup" name="password" placeholder="Password" type="password" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Confirm Password:
+				</td>
+				<td>
+					<input id="confirm_password_signup" name="confirm_password" placeholder="Confirm Password" type="password" />
+				</td>
+			</tr>
+		</table>
 		<br />
 		<a id="btn_signup" class="button">Sign Up</a>
 		<br />
@@ -151,7 +183,7 @@
 	<!-- User is logged in, display logged in home page -->
 	<a href="servlets/user_logout.jsp" class="button">Log Out</a>
 	<br />
-	<a href="#"> View my messages </a>
+	<a href="messages.jsp"> View my messages </a>
 	<br />
 	<a href="#"> Change my account settings </a>
 	<br />

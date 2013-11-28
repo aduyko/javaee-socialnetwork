@@ -5,16 +5,16 @@
 	id="WebApp_ID" version="2.5">
 	<display-name>CSE305</display-name>
 	<welcome-file-list>
-		<welcome-file>FakeLogin.jsp</welcome-file>
+		<!--<welcome-file>FakeLogin.jsp</welcome-file>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 		<welcome-file>default.html</welcome-file>
 		<welcome-file>default.htm</welcome-file>
-		<welcome-file>default.jsp</welcome-file>
+		<welcome-file>default.jsp</welcome-file>-->
  		<welcome-file>home.jsp</welcome-file>
 	</welcome-file-list>
-	<servlet>
+	<!--<servlet>
 		<description></description>
 		<display-name>CircleServlet</display-name>
 		<servlet-name>CircleServlet</servlet-name>
@@ -23,5 +23,5 @@
 	<servlet-mapping>
 		<servlet-name>CircleServlet</servlet-name>
 		<url-pattern>/CircleServlet</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>-->
 </web-app>

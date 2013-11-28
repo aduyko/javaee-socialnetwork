@@ -27,7 +27,7 @@
 			    	// Get the userId of the user you just created
 					if(result.next()) {
 					    // Sucessfully created, log user in.
-					    session.setAttribute(SessionConstants.USERID, "" + result.getInt("User_Id"));
+					    session.setAttribute(SessionConstants.USERID, result.getInt("User_Id"));
 						session.setAttribute(SessionConstants.USERNAME, result.getString("Email_Address"));
 					}
 					else {
