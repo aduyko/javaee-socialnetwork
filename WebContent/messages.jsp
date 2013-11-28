@@ -51,6 +51,8 @@
 
 <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 
+<script src="/cse-305/scripts/validation.js" type="text/javascript"></script>
+
 <script type="text/javascript">
 
 	function expandMessage(mID){
@@ -66,6 +68,42 @@
 	function deleteMessage(mID){
 		$('#' + mID + '_DeleteForm').submit();
 	}
+	function showResponseArea(mID) {
+		$('#' + mID + '_Respond').fadeIn();
+	}
+	function sendMessage(mID) {
+		removeErrors();
+		var content = $('#' + mID + '_Response').val();
+		var subject = $('#' + mID + '_Subject').val();
+		var validated = true;
+		if(!validateMessageSubject(subject)) {
+			validated = false;
+			$('#' + mID + '_Subject').addClass('input-error');
+		}
+		if(!validateMessageBody(content)) {
+			validated = false;
+			var content = $('#' + mID + '_Response').addClass('input-error');
+		}
+		if(validated){
+			var input = '<input style="display:none;" type="text" name="content" value="' + content + '" />';
+			$('#' + mID + '_Form').append(input);
+			$('#' + mID + '_Form').submit();
+		}
+	}
+	function hideMessageResponse(mID) {
+		removeErrors();
+		$('#' + mID + '_Respond').fadeOut();
+	}
+	function removeErrors(){
+		$('*').removeClass('input-error');
+	}
+	
+	// jQuery run on page load
+	$(function(){
+		setInterval(function(){
+			$('#msgResponse').fadeOut();
+		}, 4000);
+	});
 
 </script>
 
@@ -84,7 +122,7 @@
 
 			<div class="messageBody">
 			
-				<h1> My Messages </h1>
+				<h1 style="text-align: center;"> My Messages </h1>
 				<%
 					Connection conn = null; 
 					try {
@@ -113,7 +151,7 @@
 										<td>
 											<table class="messageHeader">
 												<tr bgcolor="DDDDDD">										
-													<td><a class= "button">Respond</a></td>
+													<td><a onclick="showResponseArea(<%=messageID%>)" class= "button">Respond</a></td>
 													<td><a class="button" id="<%=messageID%>_Expand" onclick="expandMessage(<%=messageID%>)">+</a>
 														<a class="button" id="<%=messageID%>_Hide" onclick="hideMessage(<%=messageID%>)" style="display:none">-</a></td>
 													<td><b><%=senderEmail%></b></td>
@@ -124,7 +162,7 @@
 													<td>
 														<form id="<%=messageID%>_DeleteForm" action="servlets/delete_message.jsp" method="post">
 															<input name="messageID" value="<%=messageID%>" style="display:none;" />
-															<a onclick="deleteMessage(<%=messageID%>)"><img src="/cse-305/images/btn_delete.png"></img></a>
+															<a class="hoverHand" onclick="deleteMessage(<%=messageID%>)"><img src="/cse-305/images/btn_delete.png"></img></a>
 														</form>
 													</td>
 												</tr>
@@ -133,6 +171,21 @@
 									</tr>
 									<tr>
 										<td id="<%=messageID%>_Content" style="display:none;"><p class="messageContent"><%=content %></p></td>
+									</tr>
+									<tr>
+										<td id="<%=messageID%>_Respond" style="display:none;">
+											<form id="<%=messageID%>_Form" action="/cse-305/servlets/send_message.jsp" method="post">
+												Subject: <input id="<%=messageID%>_Subject" type="text" name="subject" value="re:<%=subject%>" />
+												<input style="display:none;" name="to" value="<%=sender%>" />
+												<input style="display:none;" name="from" value="<%=userID%>" />
+											</form>
+											<br />
+											<textarea id="<%=messageID%>_Response" class="respondMessage" rows=4></textarea>
+											<div style="text-align: center;">
+												<a onClick="sendMessage(<%=messageID%>)" class="button">Send</a>
+												<a onClick="hideMessageResponse(<%=messageID%>)" class="button">Cancel</a>
+											</div>
+										</td>
 									</tr>
 					<%
 						    }
@@ -156,6 +209,18 @@
 					}
 				
 					%>
+					
+					<%
+						String msgResponse = (String)session.getAttribute(SessionConstants.MSG_RESPONSE);
+						session.removeAttribute(SessionConstants.MSG_RESPONSE);
+						if(msgResponse != null) {
+					%>
+						<br />
+						<br />
+					<% 
+						}
+					%>
+					<div style="text-align:center;" id="msgResponse" class="error"><%=msgResponse == null ? "" : msgResponse%></div>
 				
 			</div>
 		

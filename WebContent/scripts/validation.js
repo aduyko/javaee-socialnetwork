@@ -10,6 +10,15 @@ function validateString(input) {
     return true;
 }
 
+// Make sure this string is valid for messages
+function validateMessageString(input) {
+	for(var x = 0; x < input.length; x++) {
+		if(!validCharMessage(input.charAt(x).charCodeAt(0)))
+			return false;
+	}
+	return true;
+}
+
 // Validate password (must be at least 6 chars long and contain no spaces)
 function validatePassword(input) { 
     return input.length > 5 && input.length <=50 && (input.indexOf(" ") == -1) && validateString(input);
@@ -25,7 +34,22 @@ function validateEmail(input) {
     return input.match(emailRegex) && input.length <= 50;
 }
 
-//Make sure this char is valid (space,0-9,a-z,A-Z)
+// Validate message body
+function validateMessageBody(input) {
+	return input.length > 0 && input.length < 1000 && validateMessageString(input);
+}
+
+// Validate message subject
+function validateMessageSubject(input) {
+	return input.length > 0 && input.length < 50 && validateMessageString(input);
+}
+
+//Make sure this char is valid for names (space,0-9,a-z,A-Z)
 function validChar(ch) {
     return (ch == 32) || (ch > 47 && ch < 58) || (ch > 64 && ch < 91) || (ch > 96 && ch < 123);
+}
+
+// Make sure this char is valid for messages
+function validCharMessage(ch) {
+	return (ch > 31) && (ch != 34) && (ch != 39) && (ch != 47) && (ch != 92) && (ch != 96) && (ch < 127);
 }

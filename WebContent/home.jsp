@@ -3,6 +3,15 @@
 <head>
 <title>90's Cover Band</title>
 <link rel="stylesheet" type="text/css" href="styles/main_style.css">
+<style>
+html { 
+	background: url(/cse-305/images/bg.jpg) no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+</style>
 <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 <script src="scripts/validation.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -66,6 +75,10 @@
 			signIn();
 		});
 		
+		setInterval(function(){
+			$('#error').fadeOut();
+		}, 4000);
+		
 		$('#btn_signup').click(function(){
 			removeErrors();
 			signUp();
@@ -76,11 +89,13 @@
 		});
 		
 		$('#btn_create_account').click(function(){
+			removeErrors();
 			$('#login_form').hide();
 			$('#signup_form').fadeIn();
 		});
 		
 		$('#btn_switch_login').click(function(){
+			removeErrors();
 			$('#signup_form').hide();
 			$('#login_form').fadeIn();
 		});
@@ -161,15 +176,20 @@
 		<a href="#" id="btn_switch_login">I already have an account</a>
 	</form>
 	
-<%
-	String error = (String)session.getAttribute(SessionConstants.ERROR);
-	session.removeAttribute(SessionConstants.ERROR);
-	if(error != null){
-%>
-	<div class="error"><%=error%></div>
-<%
-	}
-%>
+	<div id="error" class="error">
+		<% 
+			String error = (String)session.getAttribute(SessionConstants.ERROR);
+			session.removeAttribute(SessionConstants.ERROR);
+			if(error != null) {
+		%>
+			<br />
+			<br />
+		<%
+			}
+		%>
+		<%=error == null ? "" : "* " + error%>
+	</div>
+
 </div>
 <%
 	}

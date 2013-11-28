@@ -1,13 +1,5 @@
 * { margin: 0; padding: 0; }
 		
-html { 
-	background: url(../images/bg.jpg) no-repeat center center fixed; 
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-}
-		
 .float-center { 
 	width: 600px; 
 	margin: 50px auto; 
@@ -31,7 +23,7 @@ html {
 }
 
 
-input.input-error {
+.input-error {
 	border: 2px solid red;
 }
 
@@ -52,6 +44,10 @@ div.messageBody {
 	cursor:pointer;
 }
 
+.hoverHand:hover {
+	cursor:pointer;
+}
+
 table.messageTable {
     border-collapse: separate;
     border-spacing: 0 5px;
@@ -64,4 +60,14 @@ table.messageHeader {
 
 p.messageContent {
 	margin: 0px 25px;
+}
+
+div.error {
+	color: red;
+}
+
+textarea.respondMessage {
+	width: 100%;
+	resize: vertical;
+	margin: 5px 0px 10px 0px;
 }
