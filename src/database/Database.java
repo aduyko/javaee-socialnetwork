@@ -1,6 +1,5 @@
 package database;
 import java.sql.Connection;
-import java.sql.ResultSet;
 
 
 /**
@@ -10,10 +9,10 @@ import java.sql.ResultSet;
  */
 public class Database {
     
-    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DATABASE_URL = "jdbc:mysql://mysql2.cs.stonybrook.edu:3306/jlapine";
-    private static final String DATABASE_USERNAME = "jlapine";
-    private static final String DATABASE_PASSWORD = "108172577";
+    public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    public static final String DATABASE_URL = "jdbc:mysql://mysql2.cs.stonybrook.edu:3306/jlapine";
+    public static final String DATABASE_USERNAME = "jlapine";
+    public static final String DATABASE_PASSWORD = "108172577";
 
     /**
      * @return A connection to the database.

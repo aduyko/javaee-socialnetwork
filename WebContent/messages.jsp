@@ -65,72 +65,74 @@
 			
 				<h1> My Messages </h1>
 				<%
-					Connection conn = Database.getConnection();
-					if(conn != null) {    
-					    try {
-							Statement stat = conn.createStatement();
-							ResultSet result = stat.executeQuery("Select * from Message_Sent where Receiver='" + userID + "'");
-							if(result.next()) {
-							    %>
-							    <table class="messageTable">
-							    <%
-							    do{
-									String subject = result.getString("Subject");
-									String content = result.getString("Content");
-									Integer sender = result.getInt("Sender");
-									Date date = result.getDate("Date");
-									String senderEmail = result.getString("Sender_Email");
-									Integer messageID = result.getInt("Message_Id");
-									%>
-										<tr sender="<%=sender%>" messageID = "<%=messageID %>">
-											<td>
-												<table>
-													<tr>										
-														<td><a>Respond</a></td>
-														<td><a id="<%=messageID%>_Expand" onclick="expandMessage(<%=messageID%>)">+</a>
-															<a id="<%=messageID%>_Hide" onclick="hideMessage(<%=messageID%>)" style="display:none">-</a></td>
-														<td><%=senderEmail%></td>
-														<td><%=subject %></td>
-														
-														<td><%=date.toString() %></td>
-														<td>
-															<form id="<%=messageID%>_DeleteForm" action="servlets/user_login.jsp" method="post">>
-																<input name="messageID" value="<%=messageID%>" />
-																<a onclick="deleteMessage()">Delete</a>
-															</form>
-														</td>
-													</tr>
-												</table>
-											</td>
-										</tr>
-										<tr>
-											<td id="<%=messageID%>_Content" style="display:none;"><%=content %></td>
-										</tr>
-									<%
-							    }
-							    while(result.next());
-							    %>
-							    </table>
-							    <%
-							}
-							else {
-					    		%>
-					    			<h3>  You do not have any messages. </h3>
-					    		<%
-							}
-						}
-					    catch(Exception e) { conn.close();}
-					    finally {
-							try {
-							    conn.close();
-							}
-							catch(Exception e) {}
-					    }
-					}
-					
-				
+					Connection conn = null; 
+					try {
+						 // Connect to the jdbc driver and tell it your database credentials
+						Class.forName(Database.JDBC_DRIVER).newInstance();
+						java.util.Properties sysprops = System.getProperties();
+						sysprops.put("user", Database.DATABASE_USERNAME);
+						sysprops.put("password", Database.DATABASE_PASSWORD);
+						conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
+						Statement stat = conn.createStatement();
+						ResultSet result = stat.executeQuery("Select * from Message_Sent where Receiver='" + userID + "'");
+						if(result.next()) {
+				 %>
+						    <table class="messageTable">
+				<%
+						    do{
+								String subject = result.getString("Subject");
+								String content = result.getString("Content");
+								Integer sender = result.getInt("Sender");
+								Date date = result.getDate("Date");
+								Integer messageID = result.getInt("Message_Id");
+								String senderEmail = result.getString("Sender_Email");
 				%>
+									<tr sender="<%=sender%>" messageID = "<%=messageID %>">
+										<td>
+											<table>
+												<tr>										
+													<td><a>Respond</a></td>
+													<td><a id="<%=messageID%>_Expand" onclick="expandMessage(<%=messageID%>)">+</a>
+														<a id="<%=messageID%>_Hide" onclick="hideMessage(<%=messageID%>)" style="display:none">-</a></td>
+													<td><%=senderEmail%></td>
+													<td><%=subject %></td>
+													
+													<td><%=date.toString() %></td>
+													<td>
+														<form id="<%=messageID%>_DeleteForm" action="servlets/delete_message.jsp" method="post">
+															<input name="messageID" value="<%=messageID%>" style="display:none;" />
+															<a onclick="deleteMessage(<%=messageID%>)">Delete</a>
+														</form>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<td id="<%=messageID%>_Content" style="display:none;"><%=content %></td>
+									</tr>
+					<%
+						    }
+						    while(result.next());
+					%>
+						    </table>
+					<%
+						}
+						else {
+					%>
+					   			<h3>  You do not have any messages. </h3>
+					<%
+						}
+					}
+					catch(Exception e) { conn.close();}
+					finally {
+						try {
+						    conn.close();
+						}
+						catch(Exception e) {}
+					}
 				
+					%>
 				
 			</div>
 		
