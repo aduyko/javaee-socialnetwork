@@ -32,7 +32,7 @@ html {
 
 
 input.input-error {
-	border: 2px solid yellow;
+	border: 2px solid red;
 }
 
 .button {
@@ -43,7 +43,25 @@ input.input-error {
     padding: .3em .9em;
 }
 
+div.messageBody {
+	padding: 5px;
+	width: 100%;
+}
 
 .button:hover {
 	cursor:pointer;
+}
+
+table.messageTable {
+    border-collapse: separate;
+    border-spacing: 0 5px;
+    width: 100%;
+}
+
+table.messageHeader {
+	width: 100%;
+}
+
+p.messageContent {
+	margin: 0px 25px;
 }

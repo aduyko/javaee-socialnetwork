@@ -17,7 +17,7 @@
     	// Get a connection to the database
     	Connection conn = null;
 		try {
-			 // Connect to the jdbc driver and tell it your database credentials
+			// Connect to the jdbc driver and tell it your database credentials
 			Class.forName(Database.JDBC_DRIVER).newInstance();
 			java.util.Properties sysprops = System.getProperties();
 			sysprops.put("user", Database.DATABASE_USERNAME);

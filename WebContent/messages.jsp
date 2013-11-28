@@ -4,6 +4,25 @@
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.Date"%>
+<%@page import="java.util.Calendar" %>
+
+<%! public String getMonth(int month) {
+    	switch(month){
+    	case 0: return "January";
+    	case 1: return "February";
+    	case 2: return "March";
+    	case 3: return "April";
+    	case 4: return "May";
+    	case 5: return "June";
+    	case 6: return "July";
+    	case 7: return "August";
+    	case 8: return "September";
+    	case 9: return "October";
+    	case 10: return "November";
+    	case 11: return "December";
+    	default: return "";
+    	}
+	} %>
 
 <%
 	Integer userID = (Integer)session.getAttribute(SessionConstants.USERID);
@@ -27,6 +46,8 @@
 	href="/cse-305/Content/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css"
 	href="/cse-305/Content/css/Circle/Circle.css" />
+	
+<link rel="stylesheet" type="text/css" href="/cse-305/styles/main_style.css" />
 
 <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 
@@ -61,7 +82,7 @@
 
 		<div id="circle_main" class="CircleBody" style="clear: both;">
 
-			<div class="CircleBodyHeader">
+			<div class="messageBody">
 			
 				<h1> My Messages </h1>
 				<%
@@ -83,25 +104,27 @@
 								String subject = result.getString("Subject");
 								String content = result.getString("Content");
 								Integer sender = result.getInt("Sender");
-								Date date = result.getDate("Date");
+								Calendar date =  Calendar.getInstance();
+								date.setTime(result.getDate("Date"));
 								Integer messageID = result.getInt("Message_Id");
 								String senderEmail = result.getString("Sender_Email");
 				%>
 									<tr sender="<%=sender%>" messageID = "<%=messageID %>">
 										<td>
-											<table>
-												<tr>										
-													<td><a>Respond</a></td>
-													<td><a id="<%=messageID%>_Expand" onclick="expandMessage(<%=messageID%>)">+</a>
-														<a id="<%=messageID%>_Hide" onclick="hideMessage(<%=messageID%>)" style="display:none">-</a></td>
-													<td><%=senderEmail%></td>
+											<table class="messageHeader">
+												<tr bgcolor="DDDDDD">										
+													<td><a class= "button">Respond</a></td>
+													<td><a class="button" id="<%=messageID%>_Expand" onclick="expandMessage(<%=messageID%>)">+</a>
+														<a class="button" id="<%=messageID%>_Hide" onclick="hideMessage(<%=messageID%>)" style="display:none">-</a></td>
+													<td><b><%=senderEmail%></b></td>
 													<td><%=subject %></td>
 													
-													<td><%=date.toString() %></td>
+													<td><%= getMonth(date.get(Calendar.MONTH)) + " " + date.get(Calendar.DAY_OF_MONTH) + ", " + date.get(Calendar.YEAR)
+													%></td>
 													<td>
 														<form id="<%=messageID%>_DeleteForm" action="servlets/delete_message.jsp" method="post">
 															<input name="messageID" value="<%=messageID%>" style="display:none;" />
-															<a onclick="deleteMessage(<%=messageID%>)">Delete</a>
+															<a onclick="deleteMessage(<%=messageID%>)"><img src="/cse-305/images/btn_delete.png"></img></a>
 														</form>
 													</td>
 												</tr>
@@ -109,7 +132,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td id="<%=messageID%>_Content" style="display:none;"><%=content %></td>
+										<td id="<%=messageID%>_Content" style="display:none;"><p class="messageContent"><%=content %></p></td>
 									</tr>
 					<%
 						    }
