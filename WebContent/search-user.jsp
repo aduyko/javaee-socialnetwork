@@ -64,11 +64,14 @@
 					try {
 						String[] tokens = searchQuery.split(" ");
 						// Check for users with first name like value or email like value
-						String query = "select * from user where (First_Name like '%" + tokens[0] + "%') or (Email_Address like '%" + tokens[0] + "%')";
+						String query = "select * from user where ((First_Name like '%" + tokens[0] + "%') or (Last_Name like '%" + tokens[0] + "%') or (Email_Address like '%" + tokens[0] + "%')";
 						// If two tokens, look for people with last name
 						if(tokens.length > 1) {
-						    query += " or (Last_Name like '%" + tokens[1] + "%') or (Email_Address like '%" + tokens[1] + "%')";
+						    query += " or (First_Name like '%" + tokens[1] + "%') or (Last_Name like '%" + tokens[1] + "%') or (Email_Address like '%" + tokens[1] + "%')";
 						}
+						query += ") and (User_Id <> " + userID + ")";
+						
+						System.out.println(query);
 						// Connect to the jdbc driver and tell it your database credentials
 						Class.forName(Database.JDBC_DRIVER).newInstance();
 						java.util.Properties sysprops = System.getProperties();
