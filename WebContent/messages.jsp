@@ -126,7 +126,7 @@
 				<%
 					Connection conn = null; 
 					try {
-						 // Connect to the jdbc driver and tell it your database credentials
+						// Connect to the jdbc driver and tell it your database credentials
 						Class.forName(Database.JDBC_DRIVER).newInstance();
 						java.util.Properties sysprops = System.getProperties();
 						sysprops.put("user", Database.DATABASE_USERNAME);
@@ -147,7 +147,7 @@
 								Integer messageID = result.getInt("Message_Id");
 								String senderEmail = result.getString("Sender_Email");
 				%>
-									<tr sender="<%=sender%>" messageID = "<%=messageID %>">
+									<tr>
 										<td>
 											<table class="messageHeader">
 												<tr bgcolor="DDDDDD">										
@@ -196,11 +196,17 @@
 						}
 						else {
 					%>
-					   			<h3>  You do not have any messages. </h3>
+								<br />
+								<br />
+								<br />
+								<br />
+								<br />
+								<br />
+					   			<h4 style="text-align:center;">  You do not have any messages. </h4>
 					<%
 						}
 					}
-					catch(Exception e) { conn.close();}
+					catch(Exception e) {}
 					finally {
 						try {
 						    conn.close();
