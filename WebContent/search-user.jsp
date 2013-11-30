@@ -92,7 +92,8 @@
 								<tr>
 									<td>
 										<form id="<%=searchUserID%>_Form" action="/cse-305/user-information.jsp" method="post">
-											<input style="display:none;" name="user" value="<%=searchUserID%>" />
+											<input style="display:none;" name="userToDisplayID" value="<%=searchUserID%>" />
+											<input style="display:none;" name="userToDisplayName" value="<%=firstName + " " + lastName%>" />
 										</form>
 										<a onclick="submitForm(<%=searchUserID%>)" href="#"><%=firstName + " " + lastName%></a>
 									</td>

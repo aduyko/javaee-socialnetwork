@@ -13,7 +13,13 @@ public class SessionConstants {
     public static final String USERNAME = "username";
     // Used for storing an error message
     public static final String ERROR = "error";
-    // User for response to messages page;
+    // Used for response to messages page;
     public static final String MSG_RESPONSE = "msgrsp";
-
+    // Used for holding the id of the user that was being viewed on user-information page
+    public static final String VIEW_USER = "viewuser";
+    // Used for holding the name of the user that was being viewed on user-information page
+    public static final String VIEW_USER_NAME = "viewusersname";
+    // User for redirecting to the main page
+    public static final String HOME_LOCATION = "/cse-305/messages.jsp";
+    
 }

@@ -58,6 +58,10 @@ table.messageHeader {
 	width: 100%;
 }
 
+tr.circleDisplay {
+	height: 2em;
+}
+
 p.messageContent {
 	margin: 0px 25px;
 }
