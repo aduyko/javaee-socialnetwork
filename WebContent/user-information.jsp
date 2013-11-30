@@ -4,6 +4,8 @@
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="java.util.ArrayList" %>
+<%@page import="java.sql.Date" %>
+<%@page import="java.util.Calendar" %>
 
 <%!
 private static class CircleData {
@@ -19,7 +21,62 @@ private static class CircleData {
       return circleID == ((CircleData)other).circleID;
   }
 }
+private static class UserData {
+	public String firstName;
+	public String lastName;
+	public String emailAddress;
+	public String address;
+	public String city;
+	public String state;
+	public String zipCode;
+	public String telephone;
+	public String gender;
+	public String dateOfBirth;
+	
+	public UserData(String firstName, String lastName,
+				String emailAddress, String address, String city,
+				String state, String zipCode, String telephone, String gender,
+				Date dateOfBirth) {
+		this.firstName = firstName == null ? "None Specified" : firstName;
+		this.lastName = lastName == null ? "None Specified" : lastName;
+		this.emailAddress = emailAddress == null ? "None Specified" : emailAddress;
+		this.address = address == null ? "None Specified" : address;
+		this.city = city == null ? "None Specified" : city;
+		this.state = state == null ? "None Specified" : state;
+		this.zipCode = zipCode == null ? "None Specified" : zipCode;
+		this.telephone = telephone == null ? "None Specified" : telephone;
+		this.gender = gender == null ? "None Specified" : ("F".equals(gender) ? "Female" : "Male");
+		if(dateOfBirth == null) {
+			this.dateOfBirth = "None Specified";
+		}
+		else {
+		    Calendar calendar = Calendar.getInstance();
+		    calendar.setTime(dateOfBirth);
+		    this.dateOfBirth = getMonth(calendar.get(Calendar.MONTH)) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+		}
+	}
+}
 %>
+<%! 
+	public static String getMonth(int month) {
+    	switch(month){
+    	case 0: return "January";
+    	case 1: return "February";
+    	case 2: return "March";
+    	case 3: return "April";
+    	case 4: return "May";
+    	case 5: return "June";
+    	case 6: return "July";
+    	case 7: return "August";
+    	case 8: return "September";
+    	case 9: return "October";
+    	case 10: return "November";
+    	case 11: return "December";
+    	default: return "";
+    	}
+	} 
+%>
+
 <%
 	Integer userID = (Integer)session.getAttribute(SessionConstants.USERID);
 	String userName = (String)session.getAttribute(SessionConstants.USERNAME);
@@ -112,18 +169,38 @@ private static class CircleData {
 				 	 *  check for both situations.
 					 */
 					String userToDisplayID = request.getParameter("userToDisplayID");
-					String userToDisplayName = request.getParameter("userToDisplayName");
 					
 					if(userToDisplayID == null && session.getAttribute(SessionConstants.VIEW_USER) != null ) {
 					    userToDisplayID = (String)session.getAttribute(SessionConstants.VIEW_USER);
 					}
-					if(userToDisplayName == null && (String)session.getAttribute(SessionConstants.VIEW_USER_NAME) != null) {
-					    userToDisplayName = (String)session.getAttribute(SessionConstants.VIEW_USER_NAME);
+					UserData usersInfo = null;
+					Connection conn = null;
+					try {
+					    
+					    Class.forName(Database.JDBC_DRIVER).newInstance();
+						java.util.Properties sysprops = System.getProperties();
+						sysprops.put("user", Database.DATABASE_USERNAME);
+						sysprops.put("password", Database.DATABASE_PASSWORD);
+						conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
+						Statement stat = conn.createStatement();
+						// A list of all of the circles they're a member of
+						ResultSet result = stat.executeQuery("select * from user where User_Id=" + userToDisplayID);
+						if(result.next()) {
+							usersInfo = new UserData(result.getString("First_Name"), result.getString("Last_Name"), result.getString("Email_Address"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"), result.getString("Gender"), result.getDate("Date_Of_Birth"));
+						}
+					    
+					}
+					catch(Exception e) {}
+					finally {
+					    try{
+							conn.close();
+					    }
+					    catch(Exception e) {}
 					}
 					    
-					if(userToDisplayID != null && userToDisplayName != null) {
+					if(userToDisplayID != null && usersInfo != null) {
 					    
-					    Connection conn = null;
+					    conn = null;
 					    try {
 							/*
 							 *  YOU CAN INVITE SOMEONE TO ANY CIRCLE THAT YOU OWN.  IF THEY HAVE
@@ -178,12 +255,65 @@ private static class CircleData {
 							    myOwnedCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
 							}
 							%>
-								<h1 style="text-align: center;">Viewing <%=userToDisplayName%></h1>
+								<h1 style="text-align: center;">Viewing <%=usersInfo.firstName + " " + usersInfo.lastName%></h1>
+								<hr>
+								<table style="width:100%">
+									<tr>
+										<td>
+											<table style="margin:20px auto; text-align:left">
+												<tr>
+													<td>First Name:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%= usersInfo.firstName %>" size="<%=usersInfo.firstName.length()%>" disabled /></td>
+												</tr>
+												<tr>
+													<td>Last Name:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%= usersInfo.lastName%>" size="<%=usersInfo.lastName.length()%>" disabled /></td>
+												</tr>
+												<tr>
+													<td>Email:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%=usersInfo.emailAddress%>" size="<%=usersInfo.emailAddress.length()%>" disabled></td>
+												</tr>
+												<tr>
+													<td>Gender:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%=usersInfo.gender%>" size="<%=usersInfo.gender.length()%>" disabled></td>
+												</tr>
+												<tr>
+													<td>Date of Birth:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%=usersInfo.dateOfBirth%>" size="<%=usersInfo.dateOfBirth.length()%>" disabled></td>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<table style="margin:20px auto; text-align:left">
+												<tr>
+													<td>Address:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%= usersInfo.address%>" size="<%=usersInfo.address.length()%>" disabled /></td>
+												</tr>
+												<tr>
+													<td>City:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%= usersInfo.city%>" size="<%=usersInfo.city.length()%>" disabled /></td>
+												</tr>
+												<tr>
+													<td>State:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%=usersInfo.state%>" size="<%=usersInfo.state.length()%>" disabled></td>
+												</tr>
+												<tr>
+													<td>ZipCode:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%=usersInfo.zipCode%>" size="<%=usersInfo.zipCode.length()%>" disabled></td>
+												</tr>
+												<tr>
+													<td>Phone Number:</td>
+													<td><input style="padding-left:10px;" type="text" value="<%=usersInfo.telephone%>" size="<%=usersInfo.telephone.length()%>" disabled></td>	
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
 								<hr>
 								<table style="width:100%;">
 									<tr>
 										<td style="vertical-align:top;">
-											<h4 style="text-align:center;"> Join a circle <%=userToDisplayName%> is in </h4>
+											<h4 style="text-align:center;"> Join a circle <%=usersInfo.firstName + " " + usersInfo.lastName%> is in </h4>
 											<% 
 												if(theirCircles.size() > 0) {
 											%>
@@ -193,7 +323,7 @@ private static class CircleData {
 													for(int x = 0; x < theirCircles.size();x++){
 													    
 													    // Only can join circles you aren't in and havn't asked to join already
-														if(!myCircles.contains(theirCircles.get(x)) && !myCircleJoinRequests.contains(theirCircles.get(x))) {
+														if(!myCircles.contains(theirCircles.get(x)) &&!myOwnedCircles.contains(theirCircles.get(x)) && !myCircleJoinRequests.contains(theirCircles.get(x))) {
 														    hasUniqueCircle = true;
 												%>
 															<tr class="circleDisplay">
@@ -203,7 +333,7 @@ private static class CircleData {
 																		<input type="text" name="circleID" value="<%=theirCircles.get(x).circleID%>"/>
 																		<input type="text" name="userID" value="<%=userID%>"/>
 																		<input type="text" name="viewUserID" value="<%=userToDisplayID%>"/>
-																		<input type="text" name="viewUsersName" value="<%=userToDisplayName%>"/>
+																		<input type="text" name="fromPage" value="/cse-305/user-information.jsp"/>
 																	</form>
 																	<a onClick="joinCircle(<%=theirCircles.get(x).circleID%>)" class="button">Join</a></td>
 															</tr>
@@ -213,7 +343,7 @@ private static class CircleData {
 													if(!hasUniqueCircle) {
 												%>
 													<tr>
-														<td style="text-align:center"> <%=userToDisplayName%> has no circles you aren't <br/> in or havn't already asked to join.</td>
+														<td style="text-align:center"> <%=usersInfo.firstName + " " + usersInfo.lastName%> has no circles you aren't <br/> in or havn't already asked to join.</td>
 													</tr>
 												<%
 													}
@@ -222,14 +352,14 @@ private static class CircleData {
 										<%	
 											}else {
 										%>
-												<h5 style="text-align:center;"><%=userToDisplayName%> has no circles.</h5>
+												<h5 style="text-align:center;"><%=usersInfo.firstName + " " + usersInfo.lastName%> has no circles.</h5>
 										<%	
 											} 
 										%>
 										</td>
 										<td style="vertical-align:top;">
 											
-											<h4 style="text-align:center;">Invite <%=userToDisplayName%> to a circle you own </h4>
+											<h4 style="text-align:center;">Invite <%=usersInfo.firstName + " " + usersInfo.lastName%> to a circle you own </h4>
 											
 											<% 
 												if(myCircles.size() > 0) { 
@@ -248,7 +378,7 @@ private static class CircleData {
 																			<input type="text" name="circleID" value="<%=myCircles.get(x).circleID%>"/>
 																			<input type="text" name="userID" value="<%=userToDisplayID%>"/>
 																			<input type="text" name="viewUserID" value="<%=userToDisplayID%>"/>
-																			<input type="text" name="viewUsersName" value="<%=userToDisplayName%>"/>
+																			<input type="text" name="fromPage" value="/cse-305/user-information.jsp"/>
 																		</form>
 																		<a onClick="joinCircle(<%=myOwnedCircles.get(x).circleID%>)" class="button">Invite</a>
 																	</td>
@@ -259,7 +389,7 @@ private static class CircleData {
 														if(!hasUniqueCircle) {
 													%>
 														<tr>
-															<td style="text-align:center;"><%=userToDisplayName%> is already in or has already </br> been invited to join all circles you own.</td>
+															<td style="text-align:center;"><%=usersInfo.firstName + " " + usersInfo.lastName%> is already in or has already <br/> been invited to join all circles you own.</td>
 														</tr>
 													<%
 														}
@@ -290,7 +420,7 @@ private static class CircleData {
 					    session.removeAttribute(SessionConstants.MSG_RESPONSE);
 					    %>
 					    	<hr>
-					    	<h4> Send <%=userToDisplayName%> a message</h4>
+					    	<h4> Send <%=usersInfo.firstName + " " + usersInfo.lastName%> a message</h4>
 					    	<table width="100%">
 					    			<tr>
 										<td>
@@ -298,7 +428,7 @@ private static class CircleData {
 												Subject: <input id="messageSubject" type="text" name="subject" size="50%" />
 												<input style="display:none;" name="to" value="<%=userToDisplayID%>" />
 												<input style="display:none;" name="from" value="<%=userID%>" />
-												<input style="display:none;" name="viewUsersName" value="<%=userToDisplayName%>" />
+												<input style="display:none;" name="fromPage" value="/cse-305/user-information.jsp" />
 											</form>
 											<br />
 											<textarea id="messageContent" class="respondMessage" rows=4></textarea>

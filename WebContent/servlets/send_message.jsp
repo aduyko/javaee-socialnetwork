@@ -8,7 +8,7 @@
 	String to = request.getParameter("to");
 	String from = request.getParameter("from");
 	// If message is sent from a user-info page this will be present
-	String viewUsersName = request.getParameter("viewUsersName");
+	String fromPage = request.getParameter("fromPage");
 	
 	
 	if(content != null && subject != null && to != null && from != null) {
@@ -35,9 +35,8 @@
 	    session.setAttribute(SessionConstants.MSG_RESPONSE, "Error sending message");
 	}
 	
-	if(viewUsersName != null) {
+	if("/cse-305/user-information.jsp".equals(fromPage)) {
 		session.setAttribute(SessionConstants.VIEW_USER, to);
-		session.setAttribute(SessionConstants.VIEW_USER_NAME, viewUsersName);
 		response.sendRedirect("/cse-305/user-information.jsp");
 	}
 	else {

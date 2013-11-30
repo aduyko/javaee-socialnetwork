@@ -75,3 +75,8 @@ textarea.respondMessage {
 	resize: vertical;
 	margin: 5px 0px 10px 0px;
 }
+
+input[disabled] {
+	border: none;
+	background: #fff;
+}
