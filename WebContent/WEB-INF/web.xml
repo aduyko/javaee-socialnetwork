@@ -17,9 +17,10 @@
 		<welcome-file>default.html</welcome-file>
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>-->
-        <welcome-file>home.jsp</welcome-file>
-    </welcome-file-list>
-    <servlet>
+ 		<welcome-file>login.jsp</welcome-file>
+	</welcome-file-list>
+ </web-app>
+	<!--<servlet>
 		<description></description>
 		<display-name>CircleServlet</display-name>
 		<servlet-name>CircleServlet</servlet-name>
@@ -30,3 +31,4 @@
 		<url-pattern>/CircleServlet</url-pattern>
 	</servlet-mapping>
 </web-app>
+-->

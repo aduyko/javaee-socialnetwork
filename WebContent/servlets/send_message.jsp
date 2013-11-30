@@ -7,9 +7,11 @@
 	String subject = request.getParameter("subject");
 	String to = request.getParameter("to");
 	String from = request.getParameter("from");
+	// If message is sent from a user-info page this will be present
+	String fromPage = request.getParameter("fromPage");
+	
 	
 	if(content != null && subject != null && to != null && from != null) {
-	    session.setAttribute(SessionConstants.MSG_RESPONSE, "Message sent!");
 	    Connection conn = null;
 	    try {
 			Class.forName(Database.JDBC_DRIVER).newInstance();
@@ -19,6 +21,7 @@
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
 			Statement stat = conn.createStatement();
 			stat.executeUpdate("Insert into Message(Date, Subject, Content, Sender, Receiver) Values (NOW()	,'" + subject + "'	,'" + content + "'	," + from + "	," + to + ")");
+			session.setAttribute(SessionConstants.MSG_RESPONSE, "Message sent!");
 	    }
 	    catch(Exception e) { session.setAttribute(SessionConstants.MSG_RESPONSE, "Error sending message");}
 	    finally {
@@ -32,5 +35,11 @@
 	    session.setAttribute(SessionConstants.MSG_RESPONSE, "Error sending message");
 	}
 	
-	response.sendRedirect("/cse-305/messages.jsp");
+	if("/cse-305/user-information.jsp".equals(fromPage)) {
+		session.setAttribute(SessionConstants.VIEW_USER, to);
+		response.sendRedirect("/cse-305/user-information.jsp");
+	}
+	else {
+		response.sendRedirect("/cse-305/messages.jsp");
+	}
 %>

@@ -194,25 +194,7 @@ html {
 <%
 	}
 	else {
-%>
-<div class="main-layout">
-
-	<h1>90's Cover Band</h1>
-	
-	<h3>Welcome <%= username %>!</h3>
-	<!-- User is logged in, display logged in home page -->
-	<a href="servlets/user_logout.jsp" class="button">Log Out</a>
-	<br />
-	<a href="messages.jsp"> View my messages </a>
-	<br />
-	<a href="#"> Change my account settings </a>
-	<br />
-	<a href="#"> View my circles </a>
-	<br />
-	<a href="#"> Search for users  </a>
-
-</div>
-<%
+	    response.sendRedirect(SessionConstants.HOME_LOCATION);
 	}
 
 %>

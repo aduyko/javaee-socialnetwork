@@ -1,1 +1,5 @@
-<div class="CircleSideBarRight"></div>
+<div class="CircleSideBarRight">
+
+	ADVERTISEMENTS GO HERE
+
+</div>

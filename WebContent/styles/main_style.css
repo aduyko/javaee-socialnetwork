@@ -58,6 +58,10 @@ table.messageHeader {
 	width: 100%;
 }
 
+tr.circleDisplay {
+	height: 2em;
+}
+
 p.messageContent {
 	margin: 0px 25px;
 }
@@ -70,4 +74,9 @@ textarea.respondMessage {
 	width: 100%;
 	resize: vertical;
 	margin: 5px 0px 10px 0px;
+}
+
+input[disabled] {
+	border: none;
+	background: #fff;
 }
