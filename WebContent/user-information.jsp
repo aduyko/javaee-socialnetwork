@@ -54,11 +54,39 @@ private static class CircleData {
 	function joinCircle(cID) {
 		$('#' + cID + '_Form').submit();
 	}
+	
+	function sendMessage() {
+		removeErrors();
+		var content = $('#messageContent').val();
+		var subject = $('#messageSubject').val();
+		var validated = true;
+		if(!validateMessageSubject(subject)) {
+			validated = false;
+			$('#messageSubject').addClass('input-error');
+		}
+		if(!validateMessageBody(content)) {
+			validated = false;
+			var content = $('#messageContent').addClass('input-error');
+		}
+		if(validated){
+			var input = '<input style="display:none;" type="text" name="content" value="' + content + '" />';
+			$('#messageForm').append(input);
+			$('#messageForm').submit();
+		}
+	}
+	
+	function removeErrors(){
+		$('*').removeClass('input-error');
+	}
 
 	$(function(){
 		setInterval(function(){
 			$('#error').fadeOut();
 		},4000);
+		
+		$('#sendMessage').click(function(){
+			sendMessage();
+		});
 	});
 
 </script>
@@ -92,28 +120,62 @@ private static class CircleData {
 					if(userToDisplayName == null && (String)session.getAttribute(SessionConstants.VIEW_USER_NAME) != null) {
 					    userToDisplayName = (String)session.getAttribute(SessionConstants.VIEW_USER_NAME);
 					}
-					session.removeAttribute(SessionConstants.VIEW_USER);
-					session.removeAttribute(SessionConstants.VIEW_USER_NAME);
 					    
 					if(userToDisplayID != null && userToDisplayName != null) {
 					    
 					    Connection conn = null;
 					    try {
-							ArrayList<CircleData> myCircles = new ArrayList<CircleData>();
+							/*
+							 *  YOU CAN INVITE SOMEONE TO ANY CIRCLE THAT YOU OWN.  IF THEY HAVE
+							 *  ALREADY BEEN INVITED, DO NOT DISPLAY SAID CIRCLE.
+							 *
+							 *  YOU CAN REQUEST TO JOIN ANY CIRCLE THEY ARE A PART OF.  IF YOU
+							 *  ALREADY ASKED TO JOIN THAT CIRCLE, DO NOT DISPLAY SAID CIRCLE.
+							 *
+							 *  IN ALL CASES, IF A USER IS ALREADY IN THE CIRCLE, DO NOT DISPLAY
+							 *  THAT CIRCLE TO INVITE OR JOIN.
+							 */
+							
+							// A list of all of the circles they're a part of
 							ArrayList<CircleData> theirCircles = new ArrayList<CircleData>();
+							// A list of all of the circles that you are in
+							ArrayList<CircleData> myCircles = new ArrayList<CircleData>();
+							// A list of all of the circles they have been invited to
+							ArrayList<CircleData> theirCircleInviteRequests = new ArrayList<CircleData>();
+							// A list of all of the circles you have requested to join
+							ArrayList<CircleData> myCircleJoinRequests = new ArrayList<CircleData>();
+							// A list of all of the circles that you own
+							ArrayList<CircleData> myOwnedCircles = new ArrayList<CircleData>();
 							Class.forName(Database.JDBC_DRIVER).newInstance();
 							java.util.Properties sysprops = System.getProperties();
 							sysprops.put("user", Database.DATABASE_USERNAME);
 							sysprops.put("password", Database.DATABASE_PASSWORD);
 							conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
 							Statement stat = conn.createStatement();
-							ResultSet result = stat.executeQuery("Select * from my_circles where User_Id=" + userToDisplayID);
+							// A list of all of the circles they're a member of
+							ResultSet result = stat.executeQuery("select c.Circle_Id, c.Circle_NAME from circle c, addedto a where c.Circle_Id = a.Circle_Id and a.User_Id =" + userToDisplayID);
 							while(result.next()) {
 							    theirCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
 							}
-							result = stat.executeQuery("Select * from my_circles where User_Id=" + userID);
+							// A list of all circles you are a member of
+							result = stat.executeQuery("select Circle_Id from addedto where User_Id =" + userID);
 							while(result.next()) {
-							    myCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
+							    myCircles.add(new CircleData(null, result.getInt("Circle_Id")));
+							}
+							// A list of all of the circles they have been invited to
+							result = stat.executeQuery("select Circle_Id from inviterequest where User_Id =" + userToDisplayID);
+							while(result.next()) {
+							    theirCircleInviteRequests.add(new CircleData(null, result.getInt("Circle_Id")));
+							}
+							// A list of all of the circles you have requested to join
+							result = stat.executeQuery("select Circle_Id from joinrequest where User_Id =" + userID);
+							while(result.next()) {
+							    myCircleJoinRequests.add(new CircleData(null, result.getInt("Circle_Id")));
+							}
+							// A list of all of the circles that you own
+							result = stat.executeQuery("select Circle_Id, Circle_NAME from circle where Owner_Of_Circle =" + userID);
+							while(result.next()) {
+							    myOwnedCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
 							}
 							%>
 								<h1 style="text-align: center;">Viewing <%=userToDisplayName%></h1>
@@ -121,7 +183,7 @@ private static class CircleData {
 								<table style="width:100%;">
 									<tr>
 										<td style="vertical-align:top;">
-											<h4 style="text-align:center;">Join <%=userToDisplayName%>'s Circles</h4>
+											<h4 style="text-align:center;"> Join a circle <%=userToDisplayName%> is in </h4>
 											<% 
 												if(theirCircles.size() > 0) {
 											%>
@@ -130,7 +192,8 @@ private static class CircleData {
 													boolean hasUniqueCircle = false;
 													for(int x = 0; x < theirCircles.size();x++){
 													    
-														if(!myCircles.contains(theirCircles.get(x))) {
+													    // Only can join circles you aren't in and havn't asked to join already
+														if(!myCircles.contains(theirCircles.get(x)) && !myCircleJoinRequests.contains(theirCircles.get(x))) {
 														    hasUniqueCircle = true;
 												%>
 															<tr class="circleDisplay">
@@ -150,7 +213,7 @@ private static class CircleData {
 													if(!hasUniqueCircle) {
 												%>
 													<tr>
-														<td style="text-align:center"> You are in all of <%=userToDisplayName%>'s circles.</td>
+														<td style="text-align:center"> <%=userToDisplayName%> has no circles you aren't <br/> in or havn't already asked to join.</td>
 													</tr>
 												<%
 													}
@@ -166,7 +229,7 @@ private static class CircleData {
 										</td>
 										<td style="vertical-align:top;">
 											
-											<h4 style="text-align:center;">Invite <%=userToDisplayName%> to Your Circles </h4>
+											<h4 style="text-align:center;">Invite <%=userToDisplayName%> to a circle you own </h4>
 											
 											<% 
 												if(myCircles.size() > 0) { 
@@ -174,20 +237,20 @@ private static class CircleData {
 												<table style="width:100%;">
 													<% 
 														boolean hasUniqueCircle = false;
-														for(int x = 0; x < myCircles.size(); x++) {
-														    if(!theirCircles.contains(myCircles.get(x))) {
+														for(int x = 0; x < myOwnedCircles.size(); x++) {
+														    if(!theirCircles.contains(myOwnedCircles.get(x)) && !theirCircleInviteRequests.contains(myOwnedCircles.get(x))) {
 																hasUniqueCircle = true;
 													%>
 																<tr class="circleDisplay">
-																	<td><%=myCircles.get(x).name%></td>
+																	<td><%=myOwnedCircles.get(x).name%></td>
 																	<td>
-																		<form id="<%=myCircles.get(x).circleID%>_Form" style="display:none;" action="/cse-305/servlets/join_circle.jsp" method="post">
+																		<form id="<%=myOwnedCircles.get(x).circleID%>_Form" style="display:none;" action="/cse-305/servlets/invite_circle.jsp" method="post">
 																			<input type="text" name="circleID" value="<%=myCircles.get(x).circleID%>"/>
 																			<input type="text" name="userID" value="<%=userToDisplayID%>"/>
 																			<input type="text" name="viewUserID" value="<%=userToDisplayID%>"/>
 																			<input type="text" name="viewUsersName" value="<%=userToDisplayName%>"/>
 																		</form>
-																		<a onClick="joinCircle(<%=myCircles.get(x).circleID%>)" class="button">Invite</a>
+																		<a onClick="joinCircle(<%=myOwnedCircles.get(x).circleID%>)" class="button">Invite</a>
 																	</td>
 																</tr>
 													<%
@@ -196,7 +259,7 @@ private static class CircleData {
 														if(!hasUniqueCircle) {
 													%>
 														<tr>
-															<td style="text-align:center;"><%=userToDisplayName%> is in all of your circles.</td>
+															<td style="text-align:center;"><%=userToDisplayName%> is already in or has already </br> been invited to join all circles you own.</td>
 														</tr>
 													<%
 														}
@@ -205,7 +268,7 @@ private static class CircleData {
 											<% 
 												}else {
 											%>
-													<h5 style="text-align:center;">You have no circles.</h5>
+													<h5 style="text-align:center;">You do not own any circles.</h5>
 											<% 
 												}
 											%>	
@@ -223,8 +286,30 @@ private static class CircleData {
 					    }
 					    String error = (String)session.getAttribute(SessionConstants.ERROR);
 					    session.removeAttribute(SessionConstants.ERROR);
+					    String msgResponse = (String)session.getAttribute(SessionConstants.MSG_RESPONSE);
+					    session.removeAttribute(SessionConstants.MSG_RESPONSE);
 					    %>
-					    	<div style="text-align:center;" id="error" class="error"><%=error == null ? "" : error%></div>
+					    	<hr>
+					    	<h4> Send <%=userToDisplayName%> a message</h4>
+					    	<table width="100%">
+					    			<tr>
+										<td>
+											<form id="messageForm" action="/cse-305/servlets/send_message.jsp" method="post">
+												Subject: <input id="messageSubject" type="text" name="subject" size="50%" />
+												<input style="display:none;" name="to" value="<%=userToDisplayID%>" />
+												<input style="display:none;" name="from" value="<%=userID%>" />
+												<input style="display:none;" name="viewUsersName" value="<%=userToDisplayName%>" />
+											</form>
+											<br />
+											<textarea id="messageContent" class="respondMessage" rows=4></textarea>
+											<div style="text-align: center;">
+												<a id="sendMessage" class="button">Send</a>
+											</div>
+										</td>
+									</tr>
+					    	</table>
+					    	<br />
+					    	<div style="text-align:center;" id="error" class="error"><%=error == null ? (msgResponse == null ? "" : msgResponse) : error%></div>
 					    <%
 					}
 					else {

@@ -175,7 +175,7 @@
 									<tr>
 										<td id="<%=messageID%>_Respond" style="display:none;">
 											<form id="<%=messageID%>_Form" action="/cse-305/servlets/send_message.jsp" method="post">
-												Subject: <input id="<%=messageID%>_Subject" type="text" name="subject" value="re:<%=subject%>" />
+												Subject: <input id="<%=messageID%>_Subject" type="text" name="subject" value="re: <%=subject%>" />
 												<input style="display:none;" name="to" value="<%=sender%>" />
 												<input style="display:none;" name="from" value="<%=userID%>" />
 											</form>

@@ -23,18 +23,18 @@
 				sysprops.put("password", Database.DATABASE_PASSWORD);
 				conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
 				Statement stat = conn.createStatement();
-				ResultSet result = stat.executeQuery("Select * from inviterequest where User_Id=" + userID + " and Circle_Id=" + circleID);
-				// This user has already been invited to join this circle, add them to the circle
+				ResultSet result = stat.executeQuery("Select * from joinrequest where User_Id=" + userID + " and Circle_Id=" + circleID);
+				// This user has already requested to join the circle, add them to the circle
 				if(result.next()) {
-				    stat.executeUpdate("delete from inviterequest where User_Id=" + userID + " and Circle_Id=" + circleID);
-				    stat.executeUpdate("Insert into addedto(User_Id, Circle_Id) Values(" + userID + "," + circleID + ")");
+				    //stat.executeUpdate("delete from joinrequest where User_Id=" + userID + " and Circle_Id=" + circleID);
+				    //stat.executeUpdate("Insert into addedto(User_Id, Circle_Id) Values(" + userID + "," + circleID + ")");
 				}
 				else {
-				    // This user has not been invited to join this circle
-				    stat.executeUpdate("Insert into joinrequest(User_Id, Circle_Id) Values(" + userID + "," + circleID + ")");
-				}	
+				    // This user has not requested to join the circle
+				    //stat.executeUpdate("Insert into inviterequest(User_Id, Circle_Id) Values(" + userID + "," + circleID + ")");
+				}
 			}
-			catch(Exception e) { session.setAttribute(SessionConstants.ERROR, "Error joining circle"); }
+			catch(Exception e) { session.setAttribute(SessionConstants.ERROR, "Error inviting to circle"); }
 			finally{
 			    try{
 					conn.close();
@@ -43,7 +43,7 @@
 			}
 	    }
 	    else {
-			session.setAttribute(SessionConstants.ERROR, "Error joining circle");
+			session.setAttribute(SessionConstants.ERROR, "Error inviting to circle");
 	    }
 	    session.setAttribute(SessionConstants.VIEW_USER_NAME, viewUsersName);
 		session.setAttribute(SessionConstants.VIEW_USER, viewUserId);
