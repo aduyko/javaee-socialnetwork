@@ -1,6 +1,6 @@
 // A regular expression to match an email address
 var emailRegex = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
-var simpleDateRegex = '[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]';
+var simpleDateRegex = '[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}';
 
 // Make sure this string is valid
 function validateString(input) {
@@ -46,7 +46,7 @@ function validateEmail(input) {
 
 // Validate address
 function validateAddress(input) {
-	return input.length > 0 && input.length < 100 && validateString(input);
+	return input.length > 0 && input.length < 100 && validateMessageString(input);
 }
 
 // Function validate date
@@ -56,12 +56,7 @@ function validateDate(input) {
 
 // Validate city
 function validateCity(input) {
-	return input.length > 0 && input.length < 50 && validateString(input);
-}
-
-// Validate state
-function validateState(input) {
-	return input.length == 2 && validateString(input);
+	return input.length > 0 && input.length < 50 && validateMessageString(input);
 }
 
 // Validate message body

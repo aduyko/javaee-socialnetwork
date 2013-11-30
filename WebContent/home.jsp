@@ -77,15 +77,19 @@ private static class UserData {
 <script type="text/javascript">
 
 	function enterEditMode() {
+		$('#gender').hide();
+		$('#genderSelector').val($('#gender').val());
+		$('#genderSelector').show();
+		$('#state').hide();
+		$('#stateSelector').val($('#state').val());
+		$('#stateSelector').show();
+		$('#editButton').hide();
+		$('#submitButton').show();
 		$.each($('input'), function(){
 			$(this).prop('disabled', false);
 			if($(this).val() == "None Specified")
 				$(this).val("");
 		});
-		$('#gender').hide();
-		$('#genderSelector').show();
-		$('#editButton').hide();
-		$('#submitButton').show();
 	}
 	
 	function removeErrors(){
@@ -94,7 +98,7 @@ private static class UserData {
 	
 	function submitChanges(){
 		removeErrors();
-		var validated = false;
+		var validated = true;
 		
 		if(!validateName($('#fName').val())) {
 			validated = false;
@@ -121,10 +125,10 @@ private static class UserData {
 			$('#address').addClass('input-error');
 		}
 		
-		if(($('#state').val().length > 0) && !validateState($('#state').val())) {
+		/*if(($('#state').val().length > 0) && !validateState($('#state').val())) {
 			validated = false;
 			$('#state').addClass('input-error');
-		} 
+		}*/
 		
 		if(($('#zipcode').val().length > 0) && !validateZipCode($('#zipcode').val())) {
 			validated = false;
@@ -136,10 +140,13 @@ private static class UserData {
 			$('#phone').addClass('input-error');
 		}
 		
-		$('#infoForm').append('<input name="gender" style="display:none;" value="' + $('#genderSelector').val() + '" />');
-		
-		if(validated)
+		if(validated) {
+			var gender = $('#genderSelector').val() == "None Specified" ? "" : $('#genderSelector').val();
+			var state = $('#stateSelector').val() == "None Specified" ? "" : $('#stateSelector').val();
+			$('#infoForm').append('<input name="gender" style="display:none;" value="' + gender + '" />');
+			$('#infoForm').append('<input name="state" style="display:none;" value="' + state + '"');
 			$('#infoForm').submit();
+		}
 	}
 
 	$(function(){
@@ -220,15 +227,15 @@ private static class UserData {
 														<td>
 															<input id="gender" style="padding-left:10px;" type="text" value="<%=user.gender%>" size="<%=user.gender.length()%>" disabled>
 															<select id="genderSelector" style="display:none;">
-																<option value="">Not Specified</option>
-																<option value="M">Male</option>
-																<option value="F">Female</option>
+																<option value="None Specified">None Specified</option>
+																<option value="Male">Male</option>
+																<option value="Female">Female</option>
 															</select>
 														</td>
 													</tr>
 													<tr>
 														<td>Date of Birth:</td>
-														<td><input id="dob" name="dob" style="padding-left:10px;" type="text" value="<%=user.dateOfBirth%>" size="<%=user.dateOfBirth.length()%>" disabled></td>
+														<td><input placeholder="MM/DD/YYYY" id="dob" name="dob" style="padding-left:10px;" type="text" value="<%=user.dateOfBirth%>" size="<%=user.dateOfBirth.length()%>" disabled></td>
 													</tr>
 												</table>
 											</td>
@@ -244,7 +251,63 @@ private static class UserData {
 													</tr>
 													<tr>
 														<td>State:</td>
-														<td><input id="state" name="state" style="padding-left:10px;" type="text" value="<%=user.state%>" size="<%=user.state.length()%>" disabled></td>
+														<td>
+															<input id="state" name="state" style="padding-left:10px;" type="text" value="<%=user.state%>" size="<%=user.state.length()%>" disabled>
+															<select id="stateSelector" style="display:none;">
+																<option value="None Specified">None Specified</option>
+																<option value="AL">Alabama</option>
+																<option value="AK">Alaska</option>
+																<option value="AZ">Arizona</option>
+																<option value="AR">Arkansas</option>
+																<option value="CA">California</option>
+																<option value="CO">Colorado</option>
+																<option value="CT">Connecticut</option>
+																<option value="DE">Delaware</option>
+																<option value="DC">District Of Columbia</option>
+																<option value="FL">Florida</option>
+																<option value="GA">Georgia</option>
+																<option value="HI">Hawaii</option>
+																<option value="ID">Idaho</option>
+																<option value="IL">Illinois</option>
+																<option value="IN">Indiana</option>
+																<option value="IA">Iowa</option>
+																<option value="KS">Kansas</option>
+																<option value="KY">Kentucky</option>
+																<option value="LA">Louisiana</option>
+																<option value="ME">Maine</option>
+																<option value="MD">Maryland</option>
+																<option value="MA">Massachusetts</option>
+																<option value="MI">Michigan</option>
+																<option value="MN">Minnesota</option>
+																<option value="MS">Mississippi</option>
+																<option value="MO">Missouri</option>
+																<option value="MT">Montana</option>
+																<option value="NE">Nebraska</option>
+																<option value="NV">Nevada</option>
+																<option value="NH">New Hampshire</option>
+																<option value="NJ">New Jersey</option>
+																<option value="NM">New Mexico</option>
+																<option value="NY">New York</option>
+																<option value="NC">North Carolina</option>
+																<option value="ND">North Dakota</option>
+																<option value="OH">Ohio</option>
+																<option value="OK">Oklahoma</option>
+																<option value="OR">Oregon</option>
+																<option value="PA">Pennsylvania</option>
+																<option value="RI">Rhode Island</option>
+																<option value="SC">South Carolina</option>
+																<option value="SD">South Dakota</option>
+																<option value="TN">Tennessee</option>
+																<option value="TX">Texas</option>
+																<option value="UT">Utah</option>
+																<option value="VT">Vermont</option>
+																<option value="VA">Virginia</option>
+																<option value="WA">Washington</option>
+																<option value="WV">West Virginia</option>
+																<option value="WI">Wisconsin</option>
+																<option value="WY">Wyoming</option>
+															</select>		
+														</td>
 													</tr>
 													<tr>
 														<td>ZipCode:</td>
