@@ -28,7 +28,7 @@
 	Integer userID = (Integer)session.getAttribute(SessionConstants.USERID);
 	String userName = (String)session.getAttribute(SessionConstants.USERNAME);
 	if(userID == null || userName == null) {
-	    response.sendRedirect("home.jsp"); 
+	    response.sendRedirect(SessionConstants.LOGIN_LOCATION); 
 	}
 	else {
 %>

@@ -8,7 +8,7 @@
 	Integer userID = (Integer)session.getAttribute(SessionConstants.USERID);
 	String userName = (String)session.getAttribute(SessionConstants.USERNAME);
 	if(userID == null || userName == null) {
-	    response.sendRedirect("home.jsp"); 
+	    response.sendRedirect(SessionConstants.LOGIN_LOCATION); 
 	}
 	else {
 %>
@@ -57,6 +57,7 @@
 			<div class="messageBody">
 			
 				<h1 style="text-align: center;"> Search Results </h1>
+				<hr />
 			
 				<% 
 					String searchQuery = request.getParameter("search");

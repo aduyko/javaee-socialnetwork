@@ -42,7 +42,6 @@
 	}
 	else {
 		session.setAttribute(SessionConstants.ERROR, "Error joining circle");
-		response.sendRedirect(SessionConstants.HOME_LOCATION);
 	}
 	
 	if("/cse-305/user-information.jsp".equals(fromPage) && viewUserId != null) {

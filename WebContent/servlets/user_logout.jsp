@@ -2,5 +2,5 @@
 <%
 	session.removeAttribute(SessionConstants.USERID);
 	session.removeAttribute(SessionConstants.USERNAME);
-	response.sendRedirect("../home.jsp"); 
+	response.sendRedirect(SessionConstants.LOGIN_LOCATION); 
 %>

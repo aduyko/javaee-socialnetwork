@@ -43,7 +43,6 @@
 	}
 	else {
 		session.setAttribute(SessionConstants.ERROR, "Error inviting to circle");
-		response.sendRedirect(SessionConstants.HOME_LOCATION);
 	}
 	
 	if("/cse-305/user-information.jsp".equals(fromPage) && viewUserId != null) {

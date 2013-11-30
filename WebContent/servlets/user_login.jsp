@@ -42,5 +42,5 @@
 		   	catch(Exception e) {}
 		}
 	}
-	response.sendRedirect("../home.jsp"); 
+	response.sendRedirect(SessionConstants.LOGIN_LOCATION); 
 %>

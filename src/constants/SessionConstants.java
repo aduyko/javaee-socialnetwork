@@ -21,5 +21,7 @@ public class SessionConstants {
     public static final String VIEW_USER_NAME = "viewusersname";
     // User for redirecting to the main page
     public static final String HOME_LOCATION = "/cse-305/messages.jsp";
+    // Used for redirecting to the login page
+    public static final String LOGIN_LOCATION = "/cse-305/login.jsp";
     
 }
