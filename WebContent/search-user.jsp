@@ -72,7 +72,6 @@
 						}
 						query += ") and (User_Id <> " + userID + ")";
 						
-						System.out.println(query);
 						// Connect to the jdbc driver and tell it your database credentials
 						Class.forName(Database.JDBC_DRIVER).newInstance();
 						java.util.Properties sysprops = System.getProperties();

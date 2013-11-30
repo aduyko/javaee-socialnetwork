@@ -1,6 +1,8 @@
+<%@page import="constants.SessionConstants" %>
 <div class="CircleSideBarLeft">
 
-
+	<a href="<%=SessionConstants.HOME_LOCATION%>">Home</a>
+	<br />
 	<a href="/cse-305/messages.jsp">My Messages</a>
 	<div class="CurrentUser">
 		<span class="Username" style="color: #00a; font-weight: bold;">
