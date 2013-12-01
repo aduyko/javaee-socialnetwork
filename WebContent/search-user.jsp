@@ -91,7 +91,7 @@
 							%>
 								<tr>
 									<td>
-										<form id="<%=searchUserID%>_Form" action="/cse-305/user-information.jsp" method="post">
+										<form id="<%=searchUserID%>_Form" action="<%=SessionConstants.USER_INFORMATION_LOCATION%>" method="post">
 											<input style="display:none;" name="userToDisplayID" value="<%=searchUserID%>" />
 											<input style="display:none;" name="userToDisplayName" value="<%=firstName + " " + lastName%>" />
 										</form>

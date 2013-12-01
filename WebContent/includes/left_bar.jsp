@@ -3,7 +3,7 @@
 
 	<a href="<%=SessionConstants.HOME_LOCATION%>">Home</a>
 	<br />
-	<a href="/cse-305/messages.jsp">My Messages</a>
+	<a href="<%=SessionConstants.MESSAGE_LOCATION%>">My Messages</a>
 	<div class="CurrentUser">
 		<span class="Username" style="color: #00a; font-weight: bold;">
 			</span>

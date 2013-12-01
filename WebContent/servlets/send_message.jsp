@@ -35,11 +35,11 @@
 	    session.setAttribute(SessionConstants.MSG_RESPONSE, "Error sending message");
 	}
 	
-	if("/cse-305/user-information.jsp".equals(fromPage)) {
+	if(SessionConstants.USER_INFORMATION_LOCATION.equals(fromPage)) {
 		session.setAttribute(SessionConstants.VIEW_USER, to);
-		response.sendRedirect("/cse-305/user-information.jsp");
+		response.sendRedirect(SessionConstants.USER_INFORMATION_LOCATION);
 	}
 	else {
-		response.sendRedirect("/cse-305/messages.jsp");
+		response.sendRedirect(SessionConstants.MESSAGE_LOCATION);
 	}
 %>

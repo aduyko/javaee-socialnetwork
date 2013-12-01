@@ -29,5 +29,5 @@
 	    
 	}
 
-	response.sendRedirect("/cse-305/messages.jsp");
+	response.sendRedirect(SessionConstants.MESSAGE_LOCATION);
 %>

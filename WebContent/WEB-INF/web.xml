@@ -9,6 +9,16 @@
         <servlet-name>AdServlet</servlet-name>
         <url-pattern>/Advertisement</url-pattern>
     </servlet-mapping>
+    	<servlet>
+		<description></description>
+		<display-name>CircleServlet</display-name>
+		<servlet-name>CircleServlet</servlet-name>
+		<servlet-class>controller.CircleServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CircleServlet</servlet-name>
+		<url-pattern>/CircleServlet</url-pattern>
+	</servlet-mapping>
     <welcome-file-list>
         <!--<welcome-file>FakeLogin.jsp</welcome-file>
 		<welcome-file>index.html</welcome-file>
@@ -20,15 +30,3 @@
  		<welcome-file>login.jsp</welcome-file>
 	</welcome-file-list>
  </web-app>
-	<!--<servlet>
-		<description></description>
-		<display-name>CircleServlet</display-name>
-		<servlet-name>CircleServlet</servlet-name>
-		<servlet-class>controller.CircleServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>CircleServlet</servlet-name>
-		<url-pattern>/CircleServlet</url-pattern>
-	</servlet-mapping>
-</web-app>
--->

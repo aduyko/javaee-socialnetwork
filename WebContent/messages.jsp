@@ -160,7 +160,7 @@
 													<td><%= getMonth(date.get(Calendar.MONTH)) + " " + date.get(Calendar.DAY_OF_MONTH) + ", " + date.get(Calendar.YEAR)
 													%></td>
 													<td>
-														<form id="<%=messageID%>_DeleteForm" action="servlets/delete_message.jsp" method="post">
+														<form id="<%=messageID%>_DeleteForm" action="<%=SessionConstants.DELETE_MESSAGE_LOCATION%>" method="post">
 															<input name="messageID" value="<%=messageID%>" style="display:none;" />
 															<a class="hoverHand" onclick="deleteMessage(<%=messageID%>)"><img src="/cse-305/images/btn_delete.png"></img></a>
 														</form>
@@ -174,7 +174,7 @@
 									</tr>
 									<tr>
 										<td id="<%=messageID%>_Respond" style="display:none;">
-											<form id="<%=messageID%>_Form" action="/cse-305/servlets/send_message.jsp" method="post">
+											<form id="<%=messageID%>_Form" action="<%=SessionConstants.SEND_MESSAGE_LOCATION%>" method="post">
 												Subject: <input id="<%=messageID%>_Subject" type="text" name="subject" value="re: <%=subject%>" />
 												<input style="display:none;" name="to" value="<%=sender%>" />
 												<input style="display:none;" name="from" value="<%=userID%>" />

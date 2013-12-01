@@ -329,11 +329,11 @@ private static class UserData {
 															<tr class="circleDisplay">
 																<td><%=theirCircles.get(x).name%></td>
 																<td>
-																	<form id="<%=theirCircles.get(x).circleID%>_Form" style="display:none;" action="/cse-305/servlets/join_circle.jsp" method="post">
+																	<form id="<%=theirCircles.get(x).circleID%>_Form" style="display:none;" action="<%=SessionConstants.JOIN_CIRCLE_LOCATION%>" method="post">
 																		<input type="text" name="circleID" value="<%=theirCircles.get(x).circleID%>"/>
 																		<input type="text" name="userID" value="<%=userID%>"/>
 																		<input type="text" name="viewUserID" value="<%=userToDisplayID%>"/>
-																		<input type="text" name="fromPage" value="/cse-305/user-information.jsp"/>
+																		<input type="text" name="fromPage" value="<%=SessionConstants.USER_INFORMATION_LOCATION%>"/>
 																	</form>
 																	<a onClick="joinCircle(<%=theirCircles.get(x).circleID%>)" class="button">Join</a></td>
 															</tr>
@@ -374,11 +374,11 @@ private static class UserData {
 																<tr class="circleDisplay">
 																	<td><%=myOwnedCircles.get(x).name%></td>
 																	<td>
-																		<form id="<%=myOwnedCircles.get(x).circleID%>_Form" style="display:none;" action="/cse-305/servlets/invite_circle.jsp" method="post">
+																		<form id="<%=myOwnedCircles.get(x).circleID%>_Form" style="display:none;" action="<%=SessionConstants.INVITE_CIRCLE_LOCATION%>" method="post">
 																			<input type="text" name="circleID" value="<%=myCircles.get(x).circleID%>"/>
 																			<input type="text" name="userID" value="<%=userToDisplayID%>"/>
 																			<input type="text" name="viewUserID" value="<%=userToDisplayID%>"/>
-																			<input type="text" name="fromPage" value="/cse-305/user-information.jsp"/>
+																			<input type="text" name="fromPage" value="<%=SessionConstants.USER_INFORMATION_LOCATION  %>"/>
 																		</form>
 																		<a onClick="joinCircle(<%=myOwnedCircles.get(x).circleID%>)" class="button">Invite</a>
 																	</td>
@@ -424,11 +424,11 @@ private static class UserData {
 					    	<table width="100%">
 					    			<tr>
 										<td>
-											<form id="messageForm" action="/cse-305/servlets/send_message.jsp" method="post">
+											<form id="messageForm" action="<%=SessionConstants.SEND_MESSAGE_LOCATION%>" method="post">
 												Subject: <input id="messageSubject" type="text" name="subject" size="50%" />
 												<input style="display:none;" name="to" value="<%=userToDisplayID%>" />
 												<input style="display:none;" name="from" value="<%=userID%>" />
-												<input style="display:none;" name="fromPage" value="/cse-305/user-information.jsp" />
+												<input style="display:none;" name="fromPage" value="<%=SessionConstants.USER_INFORMATION_LOCATION%>" />
 											</form>
 											<br />
 											<textarea id="messageContent" class="respondMessage" rows=4></textarea>

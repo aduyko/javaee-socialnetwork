@@ -205,7 +205,7 @@ private static class UserData {
 							}
 							// Display user information
 							%>
-							<form id="infoForm" action="/cse-305/servlets/update_user.jsp" method="post">
+							<form id="infoForm" action="<%=SessionConstants.UPDATE_USER_LOCATION%>" method="post">
 								<table style="width:100%">
 										<tr>
 											<td>

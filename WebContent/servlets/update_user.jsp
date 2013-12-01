@@ -1,3 +1,4 @@
+<%@page import="constants.SessionConstants" %>
 <%
 
 	String firstName = request.getParameter("fName");
@@ -11,6 +12,6 @@
 	String zipcode = request.getParameter("zipcode");
 	String phone = request.getParameter("phone");
 	
-	response.sendRedirect("/cse-305/home.jsp");
+	response.sendRedirect(SessionConstants.HOME_LOCATION);
 
 %>

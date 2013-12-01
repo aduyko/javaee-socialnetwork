@@ -115,7 +115,7 @@ html {
 	<h1>90's Cover Band</h1>
 	<br>
 	<br>
-	<form id="login_form" action="servlets/user_login.jsp" method="post">
+	<form id="login_form" action="<%=SessionConstants.USER_LOGIN_LOCATION%>" method="post">
 		<input id="email" name="username" placeholder="Email" type="text">
 		<input id="password" name="password" placeholder="Password" type="password">
 		<a id="btn_login" class="button">Log In</a>
@@ -125,7 +125,7 @@ html {
 		<a id="btn_create_account" class="button">Create Account</a>
 	</form>
 	
-	<form id="signup_form" action="servlets/user_signup.jsp" method="post" style="display:none;">
+	<form id="signup_form" action="<%=SessionConstants.USER_SIGNUP_LOCATION%>" method="post" style="display:none;">
 		<table style="margin:20px auto; text-align:left">
 			<tr>
 				<td>
