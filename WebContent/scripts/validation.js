@@ -1,5 +1,6 @@
 // A regular expression to match an email address
-var emailRegex = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'; 
+var emailRegex = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
+var simpleDateRegex = '[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}';
 
 // Make sure this string is valid
 function validateString(input) {
@@ -19,6 +20,15 @@ function validateMessageString(input) {
 	return true;
 }
 
+// Make sure this string is made up of only numbers
+function validateNumberString(input) {
+	for(var x = 0; x < input.length; x++) {
+		if(!isNumber(input.charAt(x).charCodeAt(0)))
+			return false;
+	}
+	return true;
+}
+
 // Validate password (must be at least 6 chars long and contain no spaces)
 function validatePassword(input) { 
     return input.length > 5 && input.length <=50 && (input.indexOf(" ") == -1) && validateString(input);
@@ -26,12 +36,27 @@ function validatePassword(input) {
 
 // Validate a first or last name
 function validateName(input) {
-	return input.length > 2 && input.length <= 50;
+	return input.length > 2 && input.length <= 50 && validateString(input);
 }
 
 // Validate email
 function validateEmail(input) {
     return input.match(emailRegex) && input.length <= 50;
+}
+
+// Validate address
+function validateAddress(input) {
+	return input.length > 0 && input.length < 100 && validateMessageString(input);
+}
+
+// Function validate date
+function validateDate(input) {
+	return input.match(simpleDateRegex);
+}
+
+// Validate city
+function validateCity(input) {
+	return input.length > 0 && input.length < 50 && validateMessageString(input);
 }
 
 // Validate message body
@@ -42,6 +67,20 @@ function validateMessageBody(input) {
 // Validate message subject
 function validateMessageSubject(input) {
 	return input.length > 0 && input.length < 50 && validateMessageString(input);
+}
+
+// Validate zipcode
+function validateZipCode(input) {
+	return input.length == 5 && validateNumberString(input);
+}
+
+// Validate phone number
+function validatePhone(input) {
+	return input.length == 10 && validateNumberString(input);
+}
+
+function isNumber(ch) {
+	return (ch > 47 && ch < 58);
 }
 
 //Make sure this char is valid for names (space,0-9,a-z,A-Z)
