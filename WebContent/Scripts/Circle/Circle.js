@@ -31,7 +31,8 @@ function circleDOM_onReady() {
 		var ENTER = 13;
 
 		if (e.which == ENTER) {
-			addCircleMember(e);
+			//addCircleMember(e);
+			makeComment(e);
 		}
 	});
 
