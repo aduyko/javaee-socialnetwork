@@ -375,7 +375,7 @@ private static class UserData {
 																	<td><%=myOwnedCircles.get(x).name%></td>
 																	<td>
 																		<form id="<%=myOwnedCircles.get(x).circleID%>_Form" style="display:none;" action="<%=SessionConstants.INVITE_CIRCLE_LOCATION%>" method="post">
-																			<input type="text" name="circleID" value="<%=myCircles.get(x).circleID%>"/>
+																			<input type="text" name="circleID" value="<%=myOwnedCircles.get(x).circleID%>"/>
 																			<input type="text" name="userID" value="<%=userToDisplayID%>"/>
 																			<input type="text" name="viewUserID" value="<%=userToDisplayID%>"/>
 																			<input type="text" name="fromPage" value="<%=SessionConstants.USER_INFORMATION_LOCATION  %>"/>

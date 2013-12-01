@@ -19,11 +19,12 @@ private static class UserData {
 	public String telephone;
 	public String gender;
 	public String dateOfBirth;
+	public Integer userID;
 	
 	public UserData(String firstName, String lastName,
 				String emailAddress, String address, String city,
 				String state, String zipCode, String telephone, String gender,
-				Date dateOfBirth) {
+				Date dateOfBirth, Integer userID) {
 		this.firstName = firstName == null ? "None Specified" : firstName;
 		this.lastName = lastName == null ? "None Specified" : lastName;
 		this.emailAddress = emailAddress == null ? "None Specified" : emailAddress;
@@ -33,6 +34,7 @@ private static class UserData {
 		this.zipCode = zipCode == null ? "None Specified" : zipCode;
 		this.telephone = telephone == null ? "None Specified" : telephone;
 		this.gender = gender == null ? "None Specified" : ("F".equals(gender) ? "Female" : "Male");
+		this.userID = userID;
 		if(dateOfBirth == null) {
 			this.dateOfBirth = "None Specified";
 		}
@@ -43,7 +45,25 @@ private static class UserData {
 		}
 	}
 }
+private static class CircleData {
+    public String name;
+    public int circleID;
+    public CircleData(String name, int id) {
+        this.name=  name;
+        this.circleID = id;
+    }
+  }
+
+private static class CircleJoinRequest {
+    public CircleData circle;
+    public UserData user;
+    public CircleJoinRequest(CircleData circle, UserData user) {
+		this.circle = circle;
+		this.user = user;
+    }
+}
 %>
+
 
 <%
 	Integer userID = (Integer)session.getAttribute(SessionConstants.USERID);
@@ -148,6 +168,22 @@ private static class UserData {
 			$('#infoForm').submit();
 		}
 	}
+	
+	function declineCircleInvite(cID) {
+		$('#' + cID + '_DeclineInviteForm').submit();
+	}
+	
+	function acceptCircleInvite(cID) {
+		$('#' + cID + '_AcceptInviteForm').submit();
+	}
+	
+	function acceptCircleJoinRequest(cID, uID) {
+		$('#' + cID + '_' + uID + '_AcceptJoinForm').submit();
+	}
+	
+	function declineCircleJoinRequest(cID, uID) {
+		$('#' + cID + '_' + uID + '_DeclineJoinForm').submit();
+	}
 
 	$(function(){
 		$('#editButton').click(function(){
@@ -193,18 +229,27 @@ private static class UserData {
 						Statement stat = conn.createStatement();
 						ResultSet result = stat.executeQuery("Select * from user where User_Id=" + userID);
 						if(result.next()) {
-						    UserData user = new UserData(result.getString("First_Name"), result.getString("Last_Name"), result.getString("Email_Address"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"), result.getString("Gender"), result.getDate("Date_Of_Birth"));
-							ArrayList<Integer> myOwnedCircles = new ArrayList<Integer>();
-							ArrayList<Integer> myCircleInvites = new ArrayList<Integer>();
+						    UserData user = new UserData(result.getString("First_Name"), result.getString("Last_Name"), result.getString("Email_Address"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"), result.getString("Gender"), result.getDate("Date_Of_Birth"), userID);
+							ArrayList<CircleData> myOwnedCircles = new ArrayList<CircleData>();
+							ArrayList<CircleData> myCircleInvites = new ArrayList<CircleData>();
+							// Join requests for all of the users who want to join a circle you own
+							ArrayList<CircleJoinRequest> circleJoinRequests = new ArrayList<CircleJoinRequest>();
 							// Get all circles this user owns
 							result = stat.executeQuery("Select * from circle where Owner_Of_Circle=" + userID);
 							while(result.next()) {
-							    myOwnedCircles.add(result.getInt("Circle_Id"));
+							    myOwnedCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
 							}
 							// Get all circles this user was invited to join
-							result = stat.executeQuery("Select * from inviterequest where User_Id=" + userID);
+							result = stat.executeQuery("Select c.Circle_Id, c.Circle_NAME from inviterequest i, circle c where c.Circle_Id = i.circle_ID and i.User_Id=" + userID);
 							while(result.next()) {
-							    myCircleInvites.add(result.getInt("Circle_Id"));
+							    myCircleInvites.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
+							}
+							// Go through all the circles you own and add all join requests for those circles to list
+							for(int x = 0; x < myOwnedCircles.size(); x++) {
+							    result = stat.executeQuery("Select u.First_Name, u.Last_Name, u.User_Id from joinrequest j, user u where j.User_Id = u.User_Id and j.Circle_Id= " + myOwnedCircles.get(x).circleID);
+								while(result.next()) {
+								    circleJoinRequests.add(new CircleJoinRequest(myOwnedCircles.get(x), new UserData(result.getString("First_Name"), result.getString("Last_Name"), null, null, null, null, null, null, null, null, result.getInt("User_Id"))));
+								}
 							}
 							// Display user information
 							%>
@@ -340,8 +385,90 @@ private static class UserData {
 								<h3 style="text-align:center;">Accounts</h3>
 								<hr>
 								<h3 style="text-align:center;">Circle Invites</h3>
+								<% 
+									if(myCircleInvites.size() > 0) {
+									    %>
+									    	<table class="messageTable">
+									    <%
+									    	for(int x = 0; x < myCircleInvites.size(); x++) {
+									    	    %>
+									    	    <tr>
+									    	    	<td><%=myCircleInvites.get(x).name%></td>
+									    	    	<td>
+									    	    		<form style="display:none;" id="<%=myCircleInvites.get(x).circleID%>_AcceptInviteForm" action="<%=SessionConstants.JOIN_CIRCLE_LOCATION%>" method="post">
+									    	    			<input name="fromPage" value="<%=SessionConstants.HOME_LOCATION%>" />
+									    	    			<input name="userID" value="<%=userID%>" />
+									    	    			<input name="circleID" value="<%=myCircleInvites.get(x).circleID%>" />
+									    	    		</form>
+									    	    		<a onClick="acceptCircleInvite(<%=myCircleInvites.get(x).circleID%>)" class="button">Join</a>
+									    	    	</td>
+									    	    	<td>
+									    	    		<form style="display:none;" id="<%=myCircleInvites.get(x).circleID%>_DeclineInviteForm" action="<%=SessionConstants.DECLINE_CIRCLE_INVITE_LOCATION%>" method="post">
+									    	    			<input name="userID" value="<%=userID%>" />
+									    	    			<input name="circleID" value="<%=myCircleInvites.get(x).circleID%>" />
+									    	    		</form>
+									    	    		<a onClick="declineCircleInvite(<%=myCircleInvites.get(x).circleID%>)" class="button">Decline</a>
+									    	    	</td>
+									    	    </tr>
+									    	    <%
+									    	}
+									    %>
+									    	</table>
+									    <%
+									}
+									else {
+									    %>
+									    	<h5 style="text-align:center;">You do not have any circle invites.</h5>
+									    <%
+									}
+								%>
 								<hr>
 								<h3 style="text-align:center;">Circle Join Requests Awaiting Your Approval</h3>
+								<% 
+									if(myOwnedCircles.size() > 0) {
+									    if(circleJoinRequests.size() > 0) {
+											%>
+												<table class="messageTable">
+											<%
+											for(int x = 0; x < circleJoinRequests.size(); x++) {
+											    %>
+											    	<tr>
+											    		<td><%=circleJoinRequests.get(x).user.firstName + " " + circleJoinRequests.get(x).user.lastName%></td>
+											    		<td><%=circleJoinRequests.get(x).circle.name%></td>
+											    		<td>
+											    			<form style="display:none;" id="<%=circleJoinRequests.get(x).circle.circleID%>_<%= circleJoinRequests.get(x).user.userID%>_AcceptJoinForm" action="<%=SessionConstants.INVITE_CIRCLE_LOCATION%>" method="post">
+									    	    				<input name="fromPage" value="<%=SessionConstants.HOME_LOCATION%>" />
+									    	    				<input name="userID" value="<%=circleJoinRequests.get(x).user.userID%>" />
+									    	    				<input name="circleID" value="<%=circleJoinRequests.get(x).circle.circleID%>" />
+									    	    			</form>
+											    			<a onClick="acceptCircleJoinRequest(<%=circleJoinRequests.get(x).circle.circleID%>,<%=circleJoinRequests.get(x).user.userID%>)" class="button">Accept</a>
+											    		</td>
+											    		<td>
+											    			<form style="display:none;" id="<%=circleJoinRequests.get(x).circle.circleID%>_<%= circleJoinRequests.get(x).user.userID%>_DeclineJoinForm" action="<%=SessionConstants.DECLINE_CIRCLE_JOIN_LOCATION%>" method="post">
+									    	    				<input name="userID" value="<%=circleJoinRequests.get(x).user.userID%>" />
+									    	    				<input name="circleID" value="<%=circleJoinRequests.get(x).circle.circleID%>" />
+									    	    			</form>
+											    			<a onclick="declineCircleJoinRequest(<%=circleJoinRequests.get(x).circle.circleID%>,<%=circleJoinRequests.get(x).user.userID%> )" class="button">Reject</a>
+											    		</td>
+											    	</tr>
+											    <%
+											}
+											%>
+												</table>
+											<%
+									    }
+									    else {
+											%>
+												<h5 style="text-align:center;">You do not have any requests to join a circle you own.</h5>
+											<%
+									    }
+									}
+									else {
+									    %>
+									    	<h5 style="text-align:center;">You do not own any circles.</h5>
+									    <%
+									}
+								%>
 							<%
 						}
 						else {
