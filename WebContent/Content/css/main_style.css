@@ -38,4 +38,7 @@ input.input-error {
 .hover-hand:hover {
 	cursor: pointer;
 }
+.advertisement {
+	display:inline-block;
+}
 

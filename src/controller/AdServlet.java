@@ -4,6 +4,8 @@
  */
 package controller;
 
+import bll.AdDao;
+import constants.SessionConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
@@ -33,19 +35,37 @@ public class AdServlet extends HttpServlet {
 		String view;
 		RequestDispatcher dispatcher;
 		
-		String input = request.getParameter("textInput");
-
-		input = request.getParameter("textInput");
-		if (input!=null && input.length()>0) 
-			request.setAttribute("data", input);
-		else 
-			request.setAttribute("data", "No Input");
+		String action = request.getParameter("action");
 		
-		view = "/View/AdServlet.jsp";
+		if (action!=null){
+			view = getView(action);
+			request.setAttribute("action", action);
+			request = updateRequest(request,action);
+		} else {
+			view = "/error.jsp";
+		}
 		dispatcher = getServletContext().getRequestDispatcher(view);
 		dispatcher.forward(request,response);
 	}
-
+	protected String getView(String action) {
+		String view;
+		if (action.equals("display")) {
+			view = "/View/AdDisplay.jsp";
+		} else {
+			view = "/error.jsp";
+		}
+		return view;
+	}
+	protected HttpServletRequest updateRequest(HttpServletRequest request, String action) {
+		if (action.equals("display")) {
+			request = actionDisplay(request);
+		}
+		return request;
+	}
+	protected HttpServletRequest actionDisplay(HttpServletRequest request) {
+		request.setAttribute("ads", AdDao.getRandomAds());
+		return request;
+	}
 	// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 	/**
 	 * Handles the HTTP
