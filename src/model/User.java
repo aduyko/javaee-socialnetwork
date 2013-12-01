@@ -161,4 +161,23 @@ public class User {
 	public void setRating(int rating) {
 		this.rating = rating;
 	}
+
+	/**
+	 * 
+	 */
+	public String toString() {
+		return (firstName + " " + lastName + ", " + gender);
+	}
+
+	public String contact() {
+		return (emailAddress + ", " + telephone);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String mailingAddress() {
+		return (address + ", " + city + ", " + state + " " + zipCode);
+	}
 }

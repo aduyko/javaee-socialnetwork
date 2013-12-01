@@ -313,6 +313,44 @@ public class CircleDao {
 	 * @param circleId
 	 * @return
 	 */
+	public static Circle getCircle(int circleId) {
+		Circle circle = null;
+
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		System.out.println("Log: Obtaining circle by id = " + circleId);
+
+		String query = "select * from circle where Circle_Id=?;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, circleId);
+
+			ResultSet res = ps.executeQuery();
+
+			while (res.next()) {
+				int circle_id = res.getInt("Circle_Id");
+				String circle_name = res.getString("Circle_NAME");
+				int circle_owner = res.getInt("Owner_Of_Circle");
+				String circle_type = res.getString("type");
+
+				circle = new Circle(circle_id, circle_owner, circle_name,
+						circle_type);
+			}
+
+			return circle;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param circleId
+	 * @return
+	 */
 	public static ArrayList<User> getCircleMembers(int circleId) {
 		ArrayList<User> members = new ArrayList<User>();
 
@@ -350,6 +388,7 @@ public class CircleDao {
 
 				members.add(user);
 			}
+
 			ps.close();
 			conn.close();
 			return members;
@@ -366,17 +405,20 @@ public class CircleDao {
 	 * @return
 	 */
 	public static boolean likeComment(int commentId, int authorId) {
-
 		Connection conn = Database.getConnection();
 		PreparedStatement ps;
 
 		String query = "insert into user_likes_comment values(?,?);";
 		try {
 			ps = conn.prepareStatement(query);
+
 			ps.setInt(1, authorId);
 			ps.setInt(2, commentId);
+
 			ps.executeUpdate();
 
+			ps.close();
+			conn.close();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -402,6 +444,8 @@ public class CircleDao {
 
 			ps.executeUpdate();
 
+			ps.close();
+			conn.close();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -423,7 +467,7 @@ public class CircleDao {
 
 		String query = "insert into post(Date, Content, Comment_Count, Circle, Author) values(?, ?, ?, ?, ?);";
 
-		// Now
+		// Now() for mysql Date
 		Date date = new Date(System.currentTimeMillis());
 
 		// initially no comments => should be a default value
@@ -443,13 +487,170 @@ public class CircleDao {
 			ResultSet res = ps.getGeneratedKeys();
 			res.next();
 			postId = res.getLong(1);
+
 			System.out.println("Log: Generted Post PK = " + postId);
-			
-			conn.commit();
 
-			Post post = new Post((int) postId, date, content, 0, circleId, authorId);
+			// conn.commit();
 
+			Post post = new Post((int) postId, date, content, 0, circleId,
+					authorId);
+
+			ps.close();
+			conn.close();
 			return post;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param postId
+	 * @param authorId
+	 * @param content
+	 * @return
+	 */
+	public static Comment makeComment(int postId, int authorId, String content) {
+		// Comment - Date, Content, Post, Author
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "insert into comment(Date, Content, Post, Author) values(?, ?, ?, ?);";
+
+		// Now() for mysql Date
+		Date date = new Date(System.currentTimeMillis());
+
+		try {
+			ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+
+			ps.setDate(1, date);
+			ps.setString(2, content);
+			ps.setInt(3, postId);
+			ps.setInt(4, authorId);
+
+			ps.execute();
+
+			long commentId = 0;
+			ResultSet res = ps.getGeneratedKeys();
+			res.next();
+			commentId = res.getLong(1);
+
+			System.out.println("Log: Generted comment PK = " + commentId);
+
+			Comment comment = new Comment((int) commentId, date.toString(),
+					content, postId, authorId);
+
+			// If auto-commit OFF
+			// conn.commit();
+
+			ps.close();
+			conn.close();
+			return comment;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param circleId
+	 * @return
+	 */
+	public static ArrayList<User> circleMembers(int circleId) {
+		ArrayList<User> members = new ArrayList<User>();
+
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		System.out.println("Log: Obtaining circle members");
+
+		String query = "select * from addedto a, user u where Circle_Id=? and a.User_Id=u.User_Id;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, circleId);
+
+			ResultSet res = ps.executeQuery();
+
+			while (res.next()) {
+				int userId = res.getInt("User_Id");
+				String firstName = res.getString("First_Name");
+				String lastName = res.getString("Last_Name");
+				String emailAddress = res.getString("Email_Address");
+				String password = res.getString("Password");
+				String address = res.getString("Address");
+				String city = res.getString("City");
+				String state = res.getString("State");
+				String zipCode = res.getString("Zip_Code");
+				String telephone = res.getString("Telephone");
+				String gender = res.getString("Gender");
+				Date dateOfBirth = res.getDate("Date_Of_Birth");
+				int rating = res.getInt("Rating");
+
+				User user = new User(userId, firstName, lastName, emailAddress,
+						password, address, city, state, zipCode, telephone,
+						gender, dateOfBirth, rating);
+
+				members.add(user);
+			}
+
+			ps.close();
+			conn.close();
+			return members;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static ArrayList<User> autoCompleteUserSearch(String term) {
+		ArrayList<User> results = new ArrayList<User>();
+
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		System.out.println("Log: Obtaining circle members");
+
+		String query = "select * from user where First_Name LIKE ?;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setString(1, "%" + term + "%");
+
+			ResultSet res = ps.executeQuery();
+
+			while (res.next()) {
+				int userId = res.getInt("User_Id");
+				String firstName = res.getString("First_Name");
+				String lastName = res.getString("Last_Name");
+				String emailAddress = res.getString("Email_Address");
+				String password = res.getString("Password");
+				String address = res.getString("Address");
+				String city = res.getString("City");
+				String state = res.getString("State");
+				String zipCode = res.getString("Zip_Code");
+				String telephone = res.getString("Telephone");
+				String gender = res.getString("Gender");
+				Date dateOfBirth = res.getDate("Date_Of_Birth");
+				int rating = res.getInt("Rating");
+
+				User user = new User(userId, firstName, lastName, emailAddress,
+						password, address, city, state, zipCode, telephone,
+						gender, dateOfBirth, rating);
+
+				results.add(user);
+			}
+
+			ps.close();
+			conn.close();
+			return results;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

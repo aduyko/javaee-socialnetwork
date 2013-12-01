@@ -11,7 +11,8 @@ public class Circle {
 	private int ownerId;
 	private String name;
 	private String type;
-	
+	private int memberCount;
+
 	/**
 	 * 
 	 * @param circleId
@@ -24,6 +25,28 @@ public class Circle {
 		this.ownerId = ownerId;
 		this.name = name;
 		this.type = type;
+	}
+
+	/**
+	 * 
+	 * @param circleId
+	 * @param ownerId
+	 * @param name
+	 * @param type
+	 * @param memberCount
+	 */
+	public Circle(int circleId, int ownerId, String name, String type,
+			int memberCount) {
+		this(circleId, ownerId, name, type);
+		this.memberCount = memberCount;
+	}
+
+	public int getMemberCount() {
+		return memberCount;
+	}
+
+	public void setMemberCount(int memberCount) {
+		this.memberCount = memberCount;
 	}
 
 	public int getCircleId() {

@@ -92,9 +92,71 @@ div.CircleCentral div.CircleBody {
 	min-height: 450px;
 }
 
+div.CircleCentral div.CircleBody div.CircleBodyMeta {
+	float: right;
+	width: 250px;
+	margin-right: 10px;
+}
+
+div.CircleCentral div.CircleBody div.CircleBodyMeta div.About div.AboutHeader
+	{
+	background: #dedede;
+	width: 255px;
+	height: 25px;
+	border-top: 1px solid #aeaeae;
+}
+
+div.CircleCentral div.CircleBody div.CircleBodyMeta div.Members div.MembersHeader
+	{
+	background: #dedede;
+	width: 255px;
+	height: 25px;
+	border-top: 1px solid #aeaeae;
+}
+
+div.CircleBodyMeta div.Members div.CircleMembersListDiv ul#CircleMembersList
+	{
+	list-style-type: none;
+	margin-left: -20px;
+}
+
+div.CircleCentral div.CircleBody div.UserPost div.CircleBodyMeta div.Members div#CircleMembersListDiv ul#CircleMembersList li
+	{
+	list-style-type: none;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+div.CircleCentral div.CircleBody div.UserPost div.CircleBodyMeta div.Members div#CircleMembersListDiv ul#CircleMembersList li div.UserMember{
+	padding: 5px;
+}
+
+div.CircleCentral div.CircleBody div.UserPost div.CircleBodyMeta div.Members div#CircleMembersListDiv ul#CircleMembersList li div.UserMember:hover
+	{
+	padding: 5px;
+	background: #dedede;
+}
+
+div.CircleCentral div.CircleBody div.CircleBodyMeta div.About #CircleAbout
+	{
+	height: 75px;
+}
+
+div.CircleCentral div.CircleBody div.CircleBodyMeta div.About #AddNewMember
+	{
+	
+}
+
 div.CircleCentral div.CircleBody div.CircleBodyHeader {
 	padding: 5px;
 	width: 517px;
+}
+
+div.CircleCentral div.CircleBody div.CircleBodyHeader a.CircleName {
+	align-content: center;
+	margin-left: 200px;
+	color: #000;
+	font-size: 18px;
 }
 
 div.CircleCentral div.CircleBody div.CircleBodyHeader a.inactive {
@@ -125,7 +187,6 @@ div.CircleSideBarLeft div.CurrentUser span {
 }
 
 div.CircleSideBarLeft div.CirclesListOwner {
-	margin-top: 75px;
 	padding-top: 15px;
 }
 
@@ -310,6 +371,14 @@ div.CircleSideBarRight {
 	margin-right: 25px;
 	float: left;
 	width: 13%;
+}
+
+div.CircleSideBarRight div.About {
+	
+}
+
+div.CircleSideBarRight div.About div.AboutHeader {
+	
 }
 
 div.CircleFooter {

@@ -12,6 +12,7 @@ public class Comment {
 
 	private int commentId;
 	private Date date;
+	private String dateString;
 	private String content;
 	private int postId;
 	private int authorId;
@@ -33,6 +34,23 @@ public class Comment {
 			int authorId) {
 		this.commentId = commentId;
 		this.date = date;
+		this.content = content;
+		this.postId = postId;
+		this.authorId = authorId;
+	}
+	
+	/**
+	 * 
+	 * @param commentId
+	 * @param date
+	 * @param content
+	 * @param postId
+	 * @param authorId
+	 */
+	public Comment(int commentId, String date, String content, int postId,
+			int authorId) {
+		this.commentId = commentId;
+		this.dateString = date;
 		this.content = content;
 		this.postId = postId;
 		this.authorId = authorId;
@@ -74,6 +92,14 @@ public class Comment {
 		this.likeCount = likeCount;
 		this.authorName = authorName;
 		this.author = author;
+	}
+
+	public String getDateString() {
+		return dateString;
+	}
+
+	public void setDateString(String dateString) {
+		this.dateString = dateString;
 	}
 
 	public boolean isCurrentUserLiked() {
