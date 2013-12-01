@@ -39,7 +39,7 @@ private static class UserData {
 		else {
 		    Calendar calendar = Calendar.getInstance();
 		    calendar.setTime(dateOfBirth);
-		    this.dateOfBirth = calendar.get(Calendar.MONTH) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
+		    this.dateOfBirth = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
 		}
 	}
 }
@@ -125,11 +125,6 @@ private static class UserData {
 			$('#address').addClass('input-error');
 		}
 		
-		/*if(($('#state').val().length > 0) && !validateState($('#state').val())) {
-			validated = false;
-			$('#state').addClass('input-error');
-		}*/
-		
 		if(($('#zipcode').val().length > 0) && !validateZipCode($('#zipcode').val())) {
 			validated = false;
 			$('#zipcode').addClass('input-error');
@@ -140,8 +135,13 @@ private static class UserData {
 			$('#phone').addClass('input-error');
 		}
 		
+		if(($('#password').val().length > 0) && !validatePassword($('#password').val())) {
+			validated = false;
+			$('#password').addClass('input-error');
+		}
+		
 		if(validated) {
-			var gender = $('#genderSelector').val() == "None Specified" ? "" : $('#genderSelector').val();
+			var gender = $('#genderSelector').val() == "None Specified" ? "" : ($('#genderSelector').val() == "Male" ? "M" : "F");
 			var state = $('#stateSelector').val() == "None Specified" ? "" : $('#stateSelector').val();
 			$('#infoForm').append('<input name="gender" style="display:none;" value="' + gender + '" />');
 			$('#infoForm').append('<input name="state" style="display:none;" value="' + state + '"');
@@ -156,6 +156,9 @@ private static class UserData {
 		$('#submitButton').click(function(){
 			submitChanges();
 		});
+		setTimeout(function(){
+			$('#error').fadeOut();
+		}, 4000);
 	});
 
 </script>
@@ -175,7 +178,7 @@ private static class UserData {
 
 			<div class="messageBody">
 			
-				<h1 style="text-align: center;"> My Information </h1>
+				<h3 style="text-align: center;"> My Information </h3>
 				<hr />
 				
 				<%
@@ -206,6 +209,7 @@ private static class UserData {
 							// Display user information
 							%>
 							<form id="infoForm" action="<%=SessionConstants.UPDATE_USER_LOCATION%>" method="post">
+								<input style="display:none" name="userID" value="<%=userID%>" />
 								<table style="width:100%">
 										<tr>
 											<td>
@@ -223,6 +227,10 @@ private static class UserData {
 														<td><input id="email" name="email" style="padding-left:10px;" type="text" value="<%=user.emailAddress%>" size="<%=user.emailAddress.length()%>" disabled></td>
 													</tr>
 													<tr>
+														<td>Password:</td>
+														<td><input id="password" placeholder="Leave blank if not changing" name="password" style="padding-left:10px;" type="password" value="None Specified" size="27" disabled/></td>
+													</tr>
+													<tr>
 														<td>Gender:</td>
 														<td>
 															<input id="gender" style="padding-left:10px;" type="text" value="<%=user.gender%>" size="<%=user.gender.length()%>" disabled>
@@ -235,7 +243,7 @@ private static class UserData {
 													</tr>
 													<tr>
 														<td>Date of Birth:</td>
-														<td><input placeholder="MM/DD/YYYY" id="dob" name="dob" style="padding-left:10px;" type="text" value="<%=user.dateOfBirth%>" size="<%=user.dateOfBirth.length()%>" disabled></td>
+														<td><input placeholder="YYYY-MM-DD" id="dob" name="dob" style="padding-left:10px;" type="text" value="<%=user.dateOfBirth%>" size="<%=user.dateOfBirth.length()%>" disabled></td>
 													</tr>
 												</table>
 											</td>
@@ -326,7 +334,14 @@ private static class UserData {
 									<a id="editButton" class="button">Edit</a>
 									<a id="submitButton" class="button" style="display:none;'">Submit Changes</a>
 								</div>
-							
+								<hr>
+								<h3 style="text-align:center;">Preferences</h3>
+								<hr>
+								<h3 style="text-align:center;">Accounts</h3>
+								<hr>
+								<h3 style="text-align:center;">Circle Invites</h3>
+								<hr>
+								<h3 style="text-align:center;">Circle Join Requests Awaiting Your Approval</h3>
 							<%
 						}
 						else {
@@ -343,7 +358,11 @@ private static class UserData {
 						catch(Exception e) {}
 					}
 				
+					String error = (String)session.getAttribute(SessionConstants.ERROR);
+					session.removeAttribute(SessionConstants.ERROR);
 				%>
+				
+				<div class="error" style="text-align:center" id="error"><%=error == null ? "" : error %></div>
 			</div>
 		
 		</div>
