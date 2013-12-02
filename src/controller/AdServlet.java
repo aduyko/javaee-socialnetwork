@@ -34,7 +34,6 @@ public class AdServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String view;
 		RequestDispatcher dispatcher;
-		
 		String action = request.getParameter("action");
 		
 		if (action!=null){
@@ -45,7 +44,7 @@ public class AdServlet extends HttpServlet {
 			view = "/error.jsp";
 		}
 		dispatcher = getServletContext().getRequestDispatcher(view);
-		dispatcher.forward(request,response);
+		dispatcher.include(request,response);
 	}
 	protected String getView(String action) {
 		String view;

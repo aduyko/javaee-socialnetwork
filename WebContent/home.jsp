@@ -291,6 +291,7 @@ private static class Purchase {
 			<div class="messageBody">
 			
 				<h3 style="text-align: center;"> My Information </h3>
+				
 				<hr />
 				
 				<%
