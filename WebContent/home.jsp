@@ -84,6 +84,7 @@ private static class Account {
     public Integer userID;
     public Integer accountNumber;
     public String dateCreated;
+    public ArrayList<Purchase> purchases;
     
     public Account(String creditCard, Integer userID, Integer accountNumber, Date creationDate) {
 		Calendar calendar = Calendar.getInstance();
@@ -92,6 +93,24 @@ private static class Account {
     	this.creditCardNumber = creditCard;
     	this.userID = userID;
     	this.accountNumber = accountNumber;
+    	purchases = new ArrayList<Purchase>();
+    }
+}
+private static class Purchase {
+    public String date;
+    public Integer numProducts;
+    public Integer cost;
+    public String productName;
+    public String companyName;
+    
+    public Purchase(Date datePurchased, Integer numBought, Integer cost, String productName, String companyName) {
+		Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(datePurchased);
+	  	date = getMonth(calendar.get(Calendar.MONTH)) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR); 
+		this.numProducts = numBought;
+		this.cost = cost;
+		this.productName = productName;
+		this.companyName = companyName;
     }
 }
 %>
@@ -226,6 +245,10 @@ private static class Account {
 	function declineCircleJoinRequest(cID, uID) {
 		$('#' + cID + '_' + uID + '_DeclineJoinForm').submit();
 	}
+	
+	function displayAccountHistory(accID) {
+		$('#' + accID + "_AccountHistory").fadeIn();
+	}
 
 	$(function(){
 		$('#editButton').click(function(){
@@ -309,6 +332,13 @@ private static class Account {
 							result = stat.executeQuery("Select * from account where User_Id = " + userID);
 							while(result.next()) {
 							    accounts.add(new Account(result.getString("Credit_Card_Number"), userID, result.getInt("Account_Number"), result.getDate("Account_Creation_Date")));
+							}
+							// Go through each of the accounts and add all of the purchases to it
+							for(int x = 0; x < accounts.size(); x++) {
+							    result = stat.executeQuery("select * from purchase_information where account =" + accounts.get(x).accountNumber);
+								while(result.next()) {
+								   	accounts.get(x).purchases.add(new Purchase(result.getDate("Date"), result.getInt("Number_Of_Units"), result.getInt("cost"), result.getString("Item_Name"), result.getString("Company")));
+								}
 							}
 							result = stat.executeQuery("Select * from user_preferences where Id= " + userID);
 							while(result.next()) {
@@ -476,6 +506,7 @@ private static class Account {
 									    		<th>Account #</th>
 									    		<th>Credit Card #</th>
 									    		<th>Date Created</th>
+									    		<th></th>
 									    	</tr>
 									    <%
 									    for(int x = 0; x < accounts.size(); x++) {
@@ -484,6 +515,46 @@ private static class Account {
 												<td><%=accounts.get(x).accountNumber%></td>
 												<td><%=accounts.get(x).creditCardNumber%></td>
 												<td><%=accounts.get(x).dateCreated%></td>
+												<td><a onClick="displayAccountHistory(<%=accounts.get(x).accountNumber%>)" class="button">Account History</a></td>
+											</tr>
+											<tr id="<%=accounts.get(x).accountNumber%>_AccountHistory" style="display:none;">
+												<td colspan="4">
+													<table style="padding-left:50px;background-color:#EEEEEE" class="messageTable">
+														<% 
+															if(accounts.get(x).purchases.size() > 0) {
+															    %>
+															    <tr>
+																	<th>Item Name</th>
+																	<th>Company</th>
+																	<th>Units Purchased</th>
+																	<th>Cost</th>
+																	<th>Date</th>
+																</tr>
+															    <%
+															    ArrayList<Purchase> purchases = accounts.get(x).purchases;
+															    for(int y = 0; y < purchases.size(); y++) {
+																	%>
+																		<tr>
+																			<td><%=purchases.get(y).productName%></td>
+																			<td><%=purchases.get(y).companyName%></td>
+																			<td><%=purchases.get(y).numProducts%></td>
+																			<td><%=purchases.get(y).cost%></td>
+																			<td><%=purchases.get(y).date%></td>
+																		</tr>
+																	<%
+															    }
+															}
+															else {
+															    %>
+															    	<tr>
+															    		<th>No Purchase History</th>
+															    	</tr>
+															    <%
+															}
+														%>
+													</table>
+													<hr>
+												</td>
 											</tr>
 											<%
 									    }
