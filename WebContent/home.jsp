@@ -8,6 +8,23 @@
 <%@page import="java.util.Calendar" %>
 
 <%!
+public static String getMonth(int month) {
+	switch(month){
+	case 0: return "January";
+	case 1: return "February";
+	case 2: return "March";
+	case 3: return "April";
+	case 4: return "May";
+	case 5: return "June";
+	case 6: return "July";
+	case 7: return "August";
+	case 8: return "September";
+	case 9: return "October";
+	case 10: return "November";
+	case 11: return "December";
+	default: return "";
+	}
+}
 private static class UserData {
 	public String firstName;
 	public String lastName;
@@ -60,6 +77,21 @@ private static class CircleJoinRequest {
     public CircleJoinRequest(CircleData circle, UserData user) {
 		this.circle = circle;
 		this.user = user;
+    }
+}
+private static class Account {
+    public String creditCardNumber;
+    public Integer userID;
+    public Integer accountNumber;
+    public String dateCreated;
+    
+    public Account(String creditCard, Integer userID, Integer accountNumber, Date creationDate) {
+		Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(creationDate);
+	  	dateCreated = getMonth(calendar.get(Calendar.MONTH)) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR); 
+    	this.creditCardNumber = creditCard;
+    	this.userID = userID;
+    	this.accountNumber = accountNumber;
     }
 }
 %>
@@ -116,6 +148,16 @@ private static class CircleJoinRequest {
 		$('*').removeClass('input-error');
 	}
 	
+	function createAccount() {
+		removeErrors();
+		if(validateCreditCard($('#ccNumber').val())) {
+			$('#createAccountForm').submit();
+		}
+		else {
+			$('#ccNumber').addClass('input-error');
+		}
+	}
+	
 	function submitChanges(){
 		removeErrors();
 		var validated = true;
@@ -164,7 +206,7 @@ private static class CircleJoinRequest {
 			var gender = $('#genderSelector').val() == "None Specified" ? "" : ($('#genderSelector').val() == "Male" ? "M" : "F");
 			var state = $('#stateSelector').val() == "None Specified" ? "" : $('#stateSelector').val();
 			$('#infoForm').append('<input name="gender" style="display:none;" value="' + gender + '" />');
-			$('#infoForm').append('<input name="state" style="display:none;" value="' + state + '"');
+			$('#infoForm').append('<input name="state" style="display:none;" value="' + state + '" />');
 			$('#infoForm').submit();
 		}
 	}
@@ -192,6 +234,17 @@ private static class CircleJoinRequest {
 		$('#submitButton').click(function(){
 			submitChanges();
 		});
+		$('#showCreateAccount').click(function(){
+			$('#showCreateAccount').hide();
+			$('#createAccountForm').fadeIn();
+		});
+		$('#createAccount').click(function(){
+			createAccount();
+		});
+		$('#updatePreferences').click(function(){
+			$('#updatePreferencesForm').submit();
+		});
+		
 		setTimeout(function(){
 			$('#error').fadeOut();
 		}, 4000);
@@ -234,6 +287,8 @@ private static class CircleJoinRequest {
 							ArrayList<CircleData> myCircleInvites = new ArrayList<CircleData>();
 							// Join requests for all of the users who want to join a circle you own
 							ArrayList<CircleJoinRequest> circleJoinRequests = new ArrayList<CircleJoinRequest>();
+							ArrayList<Account> accounts = new ArrayList<Account>();
+							ArrayList<String> preferences = new ArrayList<String>();
 							// Get all circles this user owns
 							result = stat.executeQuery("Select * from circle where Owner_Of_Circle=" + userID);
 							while(result.next()) {
@@ -250,6 +305,14 @@ private static class CircleJoinRequest {
 								while(result.next()) {
 								    circleJoinRequests.add(new CircleJoinRequest(myOwnedCircles.get(x), new UserData(result.getString("First_Name"), result.getString("Last_Name"), null, null, null, null, null, null, null, null, result.getInt("User_Id"))));
 								}
+							}
+							result = stat.executeQuery("Select * from account where User_Id = " + userID);
+							while(result.next()) {
+							    accounts.add(new Account(result.getString("Credit_Card_Number"), userID, result.getInt("Account_Number"), result.getDate("Account_Creation_Date")));
+							}
+							result = stat.executeQuery("Select * from user_preferences where Id= " + userID);
+							while(result.next()) {
+							    preferences.add(result.getString("Preference"));
 							}
 							// Display user information
 							%>
@@ -305,7 +368,7 @@ private static class CircleJoinRequest {
 													<tr>
 														<td>State:</td>
 														<td>
-															<input id="state" name="state" style="padding-left:10px;" type="text" value="<%=user.state%>" size="<%=user.state.length()%>" disabled>
+															<input id="state" style="padding-left:10px;" type="text" value="<%=user.state%>" size="<%=user.state.length()%>" disabled>
 															<select id="stateSelector" style="display:none;">
 																<option value="None Specified">None Specified</option>
 																<option value="AL">Alabama</option>
@@ -381,8 +444,69 @@ private static class CircleJoinRequest {
 								</div>
 								<hr>
 								<h3 style="text-align:center;">Preferences</h3>
+								<form style="text-align:center" id="updatePreferencesForm" action="<%=SessionConstants.UPDATE_PREFERENCES_LOCATION%>" method="post">
+									<input style="display:none;" name="userID" value="<%= userID%>" />
+									<table style="border-collapse: separate; border-spacing: 0 5px;margin-left:auto; margin-right:auto;">
+										<tr>
+											<td>cars</td>
+											<td><input name="cars" type="checkbox" <%=preferences.contains("cars") ? "checked" : "" %> /></td>
+										</tr>
+										<tr>
+											<td>life insurance</td>
+											<td> <input name="lifeinsurance" type="checkbox" <%=preferences.contains("life insurance") ? "checked" : "" %> /> </td>
+										</tr>
+										<tr>
+											<td>clothing</td>
+											<td> <input name="clothing" type="checkbox" <%=preferences.contains("clothing") ? "checked" : "" %> /> </td>
+										</tr>
+										<tr>
+											<td>toys</td>
+											<td> <input name="toys" type="checkbox" <%=preferences.contains("toys") ? "checked" : "" %> /> </td>
+										</tr>
+									</table>
+									<a id="updatePreferences" style="text-align:center;" class="button">Update Preferences</a>
+								</form>
 								<hr>
 								<h3 style="text-align:center;">Accounts</h3>
+								<% 
+									if(accounts.size() > 0) {
+									    %>
+									    <table class="messageTable">
+									    	<tr>
+									    		<th>Account #</th>
+									    		<th>Credit Card #</th>
+									    		<th>Date Created</th>
+									    	</tr>
+									    <%
+									    for(int x = 0; x < accounts.size(); x++) {
+											%>
+											<tr>
+												<td><%=accounts.get(x).accountNumber%></td>
+												<td><%=accounts.get(x).creditCardNumber%></td>
+												<td><%=accounts.get(x).dateCreated%></td>
+											</tr>
+											<%
+									    }
+									    %>
+									    </table>
+									    <%
+									}
+									else {
+									    %>
+									    <h5 style="text-align:center;">You do not have any accounts.</h5>
+									    <%
+									}
+								%>
+								<center><a id="showCreateAccount" class="button">Create new account</a></center>
+								<form style="display:none;" id="createAccountForm" action="<%=SessionConstants.CREATE_ACCOUNT_LOCATION%>" method="post">
+									<input style="display:none;" name="userID" value="<%=userID%>"/>
+									<table style="border-collapse: separate; border-spacing: 0 5px;margin-left:auto; margin-right:auto;">
+										<tr>
+											<td><input id="ccNumber" name="ccNumber" placeholder="Credit Card Number" type="text"/></td>
+											<td><a id="createAccount" class="button">Create</a></td>
+										</tr>
+									</table>
+								</form>
 								<hr>
 								<h3 style="text-align:center;">Circle Invites</h3>
 								<% 

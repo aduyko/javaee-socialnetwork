@@ -79,6 +79,11 @@ function validatePhone(input) {
 	return input.length == 10 && validateNumberString(input);
 }
 
+// Validate credit card number
+function validateCreditCard(input) {
+	return input.length == 16 && validateNumberString(input);
+}
+
 function isNumber(ch) {
 	return (ch > 47 && ch < 58);
 }
