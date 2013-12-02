@@ -223,6 +223,8 @@ private static class UserData {
 							ArrayList<CircleData> myCircleJoinRequests = new ArrayList<CircleData>();
 							// A list of all of the circles that you own
 							ArrayList<CircleData> myOwnedCircles = new ArrayList<CircleData>();
+							// A list of all of the users preferences
+							ArrayList<String> theirPreferences = new ArrayList<String>();
 							Class.forName(Database.JDBC_DRIVER).newInstance();
 							java.util.Properties sysprops = System.getProperties();
 							sysprops.put("user", Database.DATABASE_USERNAME);
@@ -254,6 +256,11 @@ private static class UserData {
 							while(result.next()) {
 							    myOwnedCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
 							}
+							// A list of all of their user preferences
+							result = stat.executeQuery("select * from user_preferences where Id =" + userToDisplayID);
+							while(result.next()) {
+							    theirPreferences.add(result.getString("Preference"));
+							}
 							%>
 								<h1 style="text-align: center;">Viewing <%=usersInfo.firstName + " " + usersInfo.lastName%></h1>
 								<hr>
@@ -280,6 +287,27 @@ private static class UserData {
 												<tr>
 													<td>Date of Birth:</td>
 													<td><input style="padding-left:10px;" type="text" value="<%=usersInfo.dateOfBirth%>" size="<%=usersInfo.dateOfBirth.length()%>" disabled></td>
+												</tr>
+												<tr>
+													<td>Preferences:</td>
+													<td><span style="padding-left:10px;"><% 
+															if(theirPreferences.size() > 0) {
+										    			%>
+										    					<%=theirPreferences.get(0)%>
+										    			<%
+										    					for(int x = 1; x < theirPreferences.size(); x++) {
+														%>
+																	<%=", " + theirPreferences.get(x)%>
+														<%
+										    					}
+															}
+															else {
+										    			%>
+										    						None
+										    			<%
+															}
+														%></span>
+													</td>
 												</tr>
 											</table>
 										</td>
@@ -319,33 +347,28 @@ private static class UserData {
 											%>
 												<table style="width:100%;">
 												<%
-													boolean hasUniqueCircle = false;
 													for(int x = 0; x < theirCircles.size();x++){
-													    
-													    // Only can join circles you aren't in and havn't asked to join already
-														if(!myCircles.contains(theirCircles.get(x)) &&!myOwnedCircles.contains(theirCircles.get(x)) && !myCircleJoinRequests.contains(theirCircles.get(x))) {
-														    hasUniqueCircle = true;
 												%>
 															<tr class="circleDisplay">
 																<td><%=theirCircles.get(x).name%></td>
 																<td>
+														<%		
+													   	 	// Only can join circles you aren't in and havn't asked to join already
+															if(!myCircles.contains(theirCircles.get(x)) &&!myOwnedCircles.contains(theirCircles.get(x)) && !myCircleJoinRequests.contains(theirCircles.get(x))) {
+														%>
 																	<form id="<%=theirCircles.get(x).circleID%>_Form" style="display:none;" action="<%=SessionConstants.JOIN_CIRCLE_LOCATION%>" method="post">
 																		<input type="text" name="circleID" value="<%=theirCircles.get(x).circleID%>"/>
 																		<input type="text" name="userID" value="<%=userID%>"/>
 																		<input type="text" name="viewUserID" value="<%=userToDisplayID%>"/>
 																		<input type="text" name="fromPage" value="<%=SessionConstants.USER_INFORMATION_LOCATION%>"/>
 																	</form>
-																	<a onClick="joinCircle(<%=theirCircles.get(x).circleID%>)" class="button">Join</a></td>
+																	<a onClick="joinCircle(<%=theirCircles.get(x).circleID%>)" class="button">Join</a>
+														<% 
+															}
+														%>
+																</td>
 															</tr>
-												<%
-														} 
-													}
-													if(!hasUniqueCircle) {
-												%>
-													<tr>
-														<td style="text-align:center"> <%=usersInfo.firstName + " " + usersInfo.lastName%> has no circles you aren't <br/> in or havn't already asked to join.</td>
-													</tr>
-												<%
+												<% 
 													}
 												%>
 												</table>
@@ -375,7 +398,7 @@ private static class UserData {
 																	<td><%=myOwnedCircles.get(x).name%></td>
 																	<td>
 																		<form id="<%=myOwnedCircles.get(x).circleID%>_Form" style="display:none;" action="<%=SessionConstants.INVITE_CIRCLE_LOCATION%>" method="post">
-																			<input type="text" name="circleID" value="<%=myCircles.get(x).circleID%>"/>
+																			<input type="text" name="circleID" value="<%=myOwnedCircles.get(x).circleID%>"/>
 																			<input type="text" name="userID" value="<%=userToDisplayID%>"/>
 																			<input type="text" name="viewUserID" value="<%=userToDisplayID%>"/>
 																			<input type="text" name="fromPage" value="<%=SessionConstants.USER_INFORMATION_LOCATION  %>"/>

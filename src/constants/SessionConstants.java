@@ -49,5 +49,13 @@ public class SessionConstants {
     public static final String USER_LOGOUT_LOCATION = PRE + "/servlets/user_logout.jsp";
     // Used for redirecting to user signup
     public static final String USER_SIGNUP_LOCATION = PRE + "/servlets/user_signup.jsp";
+    // Used for redirecting to decline circle invite
+    public static final String DECLINE_CIRCLE_INVITE_LOCATION = PRE + "/servlets/decline_circle_invite.jsp";
+    // Used for redirecting to decline circle join
+    public static final String DECLINE_CIRCLE_JOIN_LOCATION = PRE + "/servlets/decline_circle_join.jsp";
+    // Used for redirecting to create account
+    public static final String CREATE_ACCOUNT_LOCATION = PRE + "/servlets/create_account.jsp";
+    // Used for redirecting to update preferences
+    public static final String UPDATE_PREFERENCES_LOCATION = PRE + "/servlets/update_preferences.jsp";
     
 }

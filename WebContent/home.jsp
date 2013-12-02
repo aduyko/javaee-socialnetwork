@@ -8,6 +8,23 @@
 <%@page import="java.util.Calendar" %>
 
 <%!
+public static String getMonth(int month) {
+	switch(month){
+	case 0: return "January";
+	case 1: return "February";
+	case 2: return "March";
+	case 3: return "April";
+	case 4: return "May";
+	case 5: return "June";
+	case 6: return "July";
+	case 7: return "August";
+	case 8: return "September";
+	case 9: return "October";
+	case 10: return "November";
+	case 11: return "December";
+	default: return "";
+	}
+}
 private static class UserData {
 	public String firstName;
 	public String lastName;
@@ -19,11 +36,12 @@ private static class UserData {
 	public String telephone;
 	public String gender;
 	public String dateOfBirth;
+	public Integer userID;
 	
 	public UserData(String firstName, String lastName,
 				String emailAddress, String address, String city,
 				String state, String zipCode, String telephone, String gender,
-				Date dateOfBirth) {
+				Date dateOfBirth, Integer userID) {
 		this.firstName = firstName == null ? "None Specified" : firstName;
 		this.lastName = lastName == null ? "None Specified" : lastName;
 		this.emailAddress = emailAddress == null ? "None Specified" : emailAddress;
@@ -33,17 +51,70 @@ private static class UserData {
 		this.zipCode = zipCode == null ? "None Specified" : zipCode;
 		this.telephone = telephone == null ? "None Specified" : telephone;
 		this.gender = gender == null ? "None Specified" : ("F".equals(gender) ? "Female" : "Male");
+		this.userID = userID;
 		if(dateOfBirth == null) {
 			this.dateOfBirth = "None Specified";
 		}
 		else {
 		    Calendar calendar = Calendar.getInstance();
 		    calendar.setTime(dateOfBirth);
-		    this.dateOfBirth = calendar.get(Calendar.MONTH) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
+		    this.dateOfBirth = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
 		}
 	}
 }
+private static class CircleData {
+    public String name;
+    public int circleID;
+    public CircleData(String name, int id) {
+        this.name=  name;
+        this.circleID = id;
+    }
+  }
+
+private static class CircleJoinRequest {
+    public CircleData circle;
+    public UserData user;
+    public CircleJoinRequest(CircleData circle, UserData user) {
+		this.circle = circle;
+		this.user = user;
+    }
+}
+private static class Account {
+    public String creditCardNumber;
+    public Integer userID;
+    public Integer accountNumber;
+    public String dateCreated;
+    public ArrayList<Purchase> purchases;
+    
+    public Account(String creditCard, Integer userID, Integer accountNumber, Date creationDate) {
+		Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(creationDate);
+	  	dateCreated = getMonth(calendar.get(Calendar.MONTH)) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR); 
+    	this.creditCardNumber = creditCard;
+    	this.userID = userID;
+    	this.accountNumber = accountNumber;
+    	purchases = new ArrayList<Purchase>();
+    }
+}
+private static class Purchase {
+    public String date;
+    public Integer numProducts;
+    public Integer cost;
+    public String productName;
+    public String companyName;
+    
+    public Purchase(Date datePurchased, Integer numBought, Integer cost, String productName, String companyName) {
+		Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(datePurchased);
+	  	date = getMonth(calendar.get(Calendar.MONTH)) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR); 
+		this.numProducts = numBought;
+		this.cost = cost;
+		this.productName = productName;
+		this.companyName = companyName;
+    }
+}
 %>
+
 
 <%
 	Integer userID = (Integer)session.getAttribute(SessionConstants.USERID);
@@ -96,6 +167,16 @@ private static class UserData {
 		$('*').removeClass('input-error');
 	}
 	
+	function createAccount() {
+		removeErrors();
+		if(validateCreditCard($('#ccNumber').val())) {
+			$('#createAccountForm').submit();
+		}
+		else {
+			$('#ccNumber').addClass('input-error');
+		}
+	}
+	
 	function submitChanges(){
 		removeErrors();
 		var validated = true;
@@ -125,11 +206,6 @@ private static class UserData {
 			$('#address').addClass('input-error');
 		}
 		
-		/*if(($('#state').val().length > 0) && !validateState($('#state').val())) {
-			validated = false;
-			$('#state').addClass('input-error');
-		}*/
-		
 		if(($('#zipcode').val().length > 0) && !validateZipCode($('#zipcode').val())) {
 			validated = false;
 			$('#zipcode').addClass('input-error');
@@ -140,13 +216,38 @@ private static class UserData {
 			$('#phone').addClass('input-error');
 		}
 		
+		if(($('#password').val().length > 0) && !validatePassword($('#password').val())) {
+			validated = false;
+			$('#password').addClass('input-error');
+		}
+		
 		if(validated) {
-			var gender = $('#genderSelector').val() == "None Specified" ? "" : $('#genderSelector').val();
+			var gender = $('#genderSelector').val() == "None Specified" ? "" : ($('#genderSelector').val() == "Male" ? "M" : "F");
 			var state = $('#stateSelector').val() == "None Specified" ? "" : $('#stateSelector').val();
 			$('#infoForm').append('<input name="gender" style="display:none;" value="' + gender + '" />');
-			$('#infoForm').append('<input name="state" style="display:none;" value="' + state + '"');
+			$('#infoForm').append('<input name="state" style="display:none;" value="' + state + '" />');
 			$('#infoForm').submit();
 		}
+	}
+	
+	function declineCircleInvite(cID) {
+		$('#' + cID + '_DeclineInviteForm').submit();
+	}
+	
+	function acceptCircleInvite(cID) {
+		$('#' + cID + '_AcceptInviteForm').submit();
+	}
+	
+	function acceptCircleJoinRequest(cID, uID) {
+		$('#' + cID + '_' + uID + '_AcceptJoinForm').submit();
+	}
+	
+	function declineCircleJoinRequest(cID, uID) {
+		$('#' + cID + '_' + uID + '_DeclineJoinForm').submit();
+	}
+	
+	function displayAccountHistory(accID) {
+		$('#' + accID + "_AccountHistory").fadeIn();
 	}
 
 	$(function(){
@@ -156,6 +257,20 @@ private static class UserData {
 		$('#submitButton').click(function(){
 			submitChanges();
 		});
+		$('#showCreateAccount').click(function(){
+			$('#showCreateAccount').hide();
+			$('#createAccountForm').fadeIn();
+		});
+		$('#createAccount').click(function(){
+			createAccount();
+		});
+		$('#updatePreferences').click(function(){
+			$('#updatePreferencesForm').submit();
+		});
+		
+		setTimeout(function(){
+			$('#error').fadeOut();
+		}, 4000);
 	});
 
 </script>
@@ -175,7 +290,7 @@ private static class UserData {
 
 			<div class="messageBody">
 			
-				<h1 style="text-align: center;"> My Information </h1>
+				<h3 style="text-align: center;"> My Information </h3>
 				<hr />
 				
 				<%
@@ -190,22 +305,49 @@ private static class UserData {
 						Statement stat = conn.createStatement();
 						ResultSet result = stat.executeQuery("Select * from user where User_Id=" + userID);
 						if(result.next()) {
-						    UserData user = new UserData(result.getString("First_Name"), result.getString("Last_Name"), result.getString("Email_Address"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"), result.getString("Gender"), result.getDate("Date_Of_Birth"));
-							ArrayList<Integer> myOwnedCircles = new ArrayList<Integer>();
-							ArrayList<Integer> myCircleInvites = new ArrayList<Integer>();
+						    UserData user = new UserData(result.getString("First_Name"), result.getString("Last_Name"), result.getString("Email_Address"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"), result.getString("Gender"), result.getDate("Date_Of_Birth"), userID);
+							ArrayList<CircleData> myOwnedCircles = new ArrayList<CircleData>();
+							ArrayList<CircleData> myCircleInvites = new ArrayList<CircleData>();
+							// Join requests for all of the users who want to join a circle you own
+							ArrayList<CircleJoinRequest> circleJoinRequests = new ArrayList<CircleJoinRequest>();
+							ArrayList<Account> accounts = new ArrayList<Account>();
+							ArrayList<String> preferences = new ArrayList<String>();
 							// Get all circles this user owns
 							result = stat.executeQuery("Select * from circle where Owner_Of_Circle=" + userID);
 							while(result.next()) {
-							    myOwnedCircles.add(result.getInt("Circle_Id"));
+							    myOwnedCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
 							}
 							// Get all circles this user was invited to join
-							result = stat.executeQuery("Select * from inviterequest where User_Id=" + userID);
+							result = stat.executeQuery("Select c.Circle_Id, c.Circle_NAME from inviterequest i, circle c where c.Circle_Id = i.circle_ID and i.User_Id=" + userID);
 							while(result.next()) {
-							    myCircleInvites.add(result.getInt("Circle_Id"));
+							    myCircleInvites.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
+							}
+							// Go through all the circles you own and add all join requests for those circles to list
+							for(int x = 0; x < myOwnedCircles.size(); x++) {
+							    result = stat.executeQuery("Select u.First_Name, u.Last_Name, u.User_Id from joinrequest j, user u where j.User_Id = u.User_Id and j.Circle_Id= " + myOwnedCircles.get(x).circleID);
+								while(result.next()) {
+								    circleJoinRequests.add(new CircleJoinRequest(myOwnedCircles.get(x), new UserData(result.getString("First_Name"), result.getString("Last_Name"), null, null, null, null, null, null, null, null, result.getInt("User_Id"))));
+								}
+							}
+							result = stat.executeQuery("Select * from account where User_Id = " + userID);
+							while(result.next()) {
+							    accounts.add(new Account(result.getString("Credit_Card_Number"), userID, result.getInt("Account_Number"), result.getDate("Account_Creation_Date")));
+							}
+							// Go through each of the accounts and add all of the purchases to it
+							for(int x = 0; x < accounts.size(); x++) {
+							    result = stat.executeQuery("select * from purchase_information where account =" + accounts.get(x).accountNumber);
+								while(result.next()) {
+								   	accounts.get(x).purchases.add(new Purchase(result.getDate("Date"), result.getInt("Number_Of_Units"), result.getInt("cost"), result.getString("Item_Name"), result.getString("Company")));
+								}
+							}
+							result = stat.executeQuery("Select * from user_preferences where Id= " + userID);
+							while(result.next()) {
+							    preferences.add(result.getString("Preference"));
 							}
 							// Display user information
 							%>
 							<form id="infoForm" action="<%=SessionConstants.UPDATE_USER_LOCATION%>" method="post">
+								<input style="display:none" name="userID" value="<%=userID%>" />
 								<table style="width:100%">
 										<tr>
 											<td>
@@ -223,6 +365,10 @@ private static class UserData {
 														<td><input id="email" name="email" style="padding-left:10px;" type="text" value="<%=user.emailAddress%>" size="<%=user.emailAddress.length()%>" disabled></td>
 													</tr>
 													<tr>
+														<td>Password:</td>
+														<td><input id="password" placeholder="Leave blank if not changing" name="password" style="padding-left:10px;" type="password" value="None Specified" size="27" disabled/></td>
+													</tr>
+													<tr>
 														<td>Gender:</td>
 														<td>
 															<input id="gender" style="padding-left:10px;" type="text" value="<%=user.gender%>" size="<%=user.gender.length()%>" disabled>
@@ -235,7 +381,7 @@ private static class UserData {
 													</tr>
 													<tr>
 														<td>Date of Birth:</td>
-														<td><input placeholder="MM/DD/YYYY" id="dob" name="dob" style="padding-left:10px;" type="text" value="<%=user.dateOfBirth%>" size="<%=user.dateOfBirth.length()%>" disabled></td>
+														<td><input placeholder="YYYY-MM-DD" id="dob" name="dob" style="padding-left:10px;" type="text" value="<%=user.dateOfBirth%>" size="<%=user.dateOfBirth.length()%>" disabled></td>
 													</tr>
 												</table>
 											</td>
@@ -252,7 +398,7 @@ private static class UserData {
 													<tr>
 														<td>State:</td>
 														<td>
-															<input id="state" name="state" style="padding-left:10px;" type="text" value="<%=user.state%>" size="<%=user.state.length()%>" disabled>
+															<input id="state" style="padding-left:10px;" type="text" value="<%=user.state%>" size="<%=user.state.length()%>" disabled>
 															<select id="stateSelector" style="display:none;">
 																<option value="None Specified">None Specified</option>
 																<option value="AL">Alabama</option>
@@ -326,7 +472,198 @@ private static class UserData {
 									<a id="editButton" class="button">Edit</a>
 									<a id="submitButton" class="button" style="display:none;'">Submit Changes</a>
 								</div>
-							
+								<hr>
+								<h3 style="text-align:center;">Preferences</h3>
+								<form style="text-align:center" id="updatePreferencesForm" action="<%=SessionConstants.UPDATE_PREFERENCES_LOCATION%>" method="post">
+									<input style="display:none;" name="userID" value="<%= userID%>" />
+									<table style="border-collapse: separate; border-spacing: 0 5px;margin-left:auto; margin-right:auto;">
+										<tr>
+											<td>cars</td>
+											<td><input name="cars" type="checkbox" <%=preferences.contains("cars") ? "checked" : "" %> /></td>
+										</tr>
+										<tr>
+											<td>life insurance</td>
+											<td> <input name="lifeinsurance" type="checkbox" <%=preferences.contains("life insurance") ? "checked" : "" %> /> </td>
+										</tr>
+										<tr>
+											<td>clothing</td>
+											<td> <input name="clothing" type="checkbox" <%=preferences.contains("clothing") ? "checked" : "" %> /> </td>
+										</tr>
+										<tr>
+											<td>toys</td>
+											<td> <input name="toys" type="checkbox" <%=preferences.contains("toys") ? "checked" : "" %> /> </td>
+										</tr>
+									</table>
+									<a id="updatePreferences" style="text-align:center;" class="button">Update Preferences</a>
+								</form>
+								<hr>
+								<h3 style="text-align:center;">Accounts</h3>
+								<% 
+									if(accounts.size() > 0) {
+									    %>
+									    <table class="messageTable">
+									    	<tr>
+									    		<th>Account #</th>
+									    		<th>Credit Card #</th>
+									    		<th>Date Created</th>
+									    		<th></th>
+									    	</tr>
+									    <%
+									    for(int x = 0; x < accounts.size(); x++) {
+											%>
+											<tr>
+												<td><%=accounts.get(x).accountNumber%></td>
+												<td><%=accounts.get(x).creditCardNumber%></td>
+												<td><%=accounts.get(x).dateCreated%></td>
+												<td><a onClick="displayAccountHistory(<%=accounts.get(x).accountNumber%>)" class="button">Account History</a></td>
+											</tr>
+											<tr id="<%=accounts.get(x).accountNumber%>_AccountHistory" style="display:none;">
+												<td colspan="4">
+													<table style="padding-left:50px;background-color:#EEEEEE" class="messageTable">
+														<% 
+															if(accounts.get(x).purchases.size() > 0) {
+															    %>
+															    <tr>
+																	<th>Item Name</th>
+																	<th>Company</th>
+																	<th>Units Purchased</th>
+																	<th>Cost</th>
+																	<th>Date</th>
+																</tr>
+															    <%
+															    ArrayList<Purchase> purchases = accounts.get(x).purchases;
+															    for(int y = 0; y < purchases.size(); y++) {
+																	%>
+																		<tr>
+																			<td><%=purchases.get(y).productName%></td>
+																			<td><%=purchases.get(y).companyName%></td>
+																			<td><%=purchases.get(y).numProducts%></td>
+																			<td><%=purchases.get(y).cost%></td>
+																			<td><%=purchases.get(y).date%></td>
+																		</tr>
+																	<%
+															    }
+															}
+															else {
+															    %>
+															    	<tr>
+															    		<th>No Purchase History</th>
+															    	</tr>
+															    <%
+															}
+														%>
+													</table>
+													<hr>
+												</td>
+											</tr>
+											<%
+									    }
+									    %>
+									    </table>
+									    <%
+									}
+									else {
+									    %>
+									    <h5 style="text-align:center;">You do not have any accounts.</h5>
+									    <%
+									}
+								%>
+								<center><a id="showCreateAccount" class="button">Create new account</a></center>
+								<form style="display:none;" id="createAccountForm" action="<%=SessionConstants.CREATE_ACCOUNT_LOCATION%>" method="post">
+									<input style="display:none;" name="userID" value="<%=userID%>"/>
+									<table style="border-collapse: separate; border-spacing: 0 5px;margin-left:auto; margin-right:auto;">
+										<tr>
+											<td><input id="ccNumber" name="ccNumber" placeholder="Credit Card Number" type="text"/></td>
+											<td><a id="createAccount" class="button">Create</a></td>
+										</tr>
+									</table>
+								</form>
+								<hr>
+								<h3 style="text-align:center;">Circle Invites</h3>
+								<% 
+									if(myCircleInvites.size() > 0) {
+									    %>
+									    	<table class="messageTable">
+									    <%
+									    	for(int x = 0; x < myCircleInvites.size(); x++) {
+									    	    %>
+									    	    <tr>
+									    	    	<td><%=myCircleInvites.get(x).name%></td>
+									    	    	<td>
+									    	    		<form style="display:none;" id="<%=myCircleInvites.get(x).circleID%>_AcceptInviteForm" action="<%=SessionConstants.JOIN_CIRCLE_LOCATION%>" method="post">
+									    	    			<input name="fromPage" value="<%=SessionConstants.HOME_LOCATION%>" />
+									    	    			<input name="userID" value="<%=userID%>" />
+									    	    			<input name="circleID" value="<%=myCircleInvites.get(x).circleID%>" />
+									    	    		</form>
+									    	    		<a onClick="acceptCircleInvite(<%=myCircleInvites.get(x).circleID%>)" class="button">Join</a>
+									    	    	</td>
+									    	    	<td>
+									    	    		<form style="display:none;" id="<%=myCircleInvites.get(x).circleID%>_DeclineInviteForm" action="<%=SessionConstants.DECLINE_CIRCLE_INVITE_LOCATION%>" method="post">
+									    	    			<input name="userID" value="<%=userID%>" />
+									    	    			<input name="circleID" value="<%=myCircleInvites.get(x).circleID%>" />
+									    	    		</form>
+									    	    		<a onClick="declineCircleInvite(<%=myCircleInvites.get(x).circleID%>)" class="button">Decline</a>
+									    	    	</td>
+									    	    </tr>
+									    	    <%
+									    	}
+									    %>
+									    	</table>
+									    <%
+									}
+									else {
+									    %>
+									    	<h5 style="text-align:center;">You do not have any circle invites.</h5>
+									    <%
+									}
+								%>
+								<hr>
+								<h3 style="text-align:center;">Circle Join Requests Awaiting Your Approval</h3>
+								<% 
+									if(myOwnedCircles.size() > 0) {
+									    if(circleJoinRequests.size() > 0) {
+											%>
+												<table class="messageTable">
+											<%
+											for(int x = 0; x < circleJoinRequests.size(); x++) {
+											    %>
+											    	<tr>
+											    		<td><%=circleJoinRequests.get(x).user.firstName + " " + circleJoinRequests.get(x).user.lastName%></td>
+											    		<td><%=circleJoinRequests.get(x).circle.name%></td>
+											    		<td>
+											    			<form style="display:none;" id="<%=circleJoinRequests.get(x).circle.circleID%>_<%= circleJoinRequests.get(x).user.userID%>_AcceptJoinForm" action="<%=SessionConstants.INVITE_CIRCLE_LOCATION%>" method="post">
+									    	    				<input name="fromPage" value="<%=SessionConstants.HOME_LOCATION%>" />
+									    	    				<input name="userID" value="<%=circleJoinRequests.get(x).user.userID%>" />
+									    	    				<input name="circleID" value="<%=circleJoinRequests.get(x).circle.circleID%>" />
+									    	    			</form>
+											    			<a onClick="acceptCircleJoinRequest(<%=circleJoinRequests.get(x).circle.circleID%>,<%=circleJoinRequests.get(x).user.userID%>)" class="button">Accept</a>
+											    		</td>
+											    		<td>
+											    			<form style="display:none;" id="<%=circleJoinRequests.get(x).circle.circleID%>_<%= circleJoinRequests.get(x).user.userID%>_DeclineJoinForm" action="<%=SessionConstants.DECLINE_CIRCLE_JOIN_LOCATION%>" method="post">
+									    	    				<input name="userID" value="<%=circleJoinRequests.get(x).user.userID%>" />
+									    	    				<input name="circleID" value="<%=circleJoinRequests.get(x).circle.circleID%>" />
+									    	    			</form>
+											    			<a onclick="declineCircleJoinRequest(<%=circleJoinRequests.get(x).circle.circleID%>,<%=circleJoinRequests.get(x).user.userID%> )" class="button">Reject</a>
+											    		</td>
+											    	</tr>
+											    <%
+											}
+											%>
+												</table>
+											<%
+									    }
+									    else {
+											%>
+												<h5 style="text-align:center;">You do not have any requests to join a circle you own.</h5>
+											<%
+									    }
+									}
+									else {
+									    %>
+									    	<h5 style="text-align:center;">You do not own any circles.</h5>
+									    <%
+									}
+								%>
 							<%
 						}
 						else {
@@ -343,7 +680,11 @@ private static class UserData {
 						catch(Exception e) {}
 					}
 				
+					String error = (String)session.getAttribute(SessionConstants.ERROR);
+					session.removeAttribute(SessionConstants.ERROR);
 				%>
+				
+				<div class="error" style="text-align:center" id="error"><%=error == null ? "" : error %></div>
 			</div>
 		
 		</div>

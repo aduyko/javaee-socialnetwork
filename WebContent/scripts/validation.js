@@ -1,6 +1,6 @@
 // A regular expression to match an email address
 var emailRegex = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
-var simpleDateRegex = '[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}';
+var simpleDateRegex = '[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}';
 
 // Make sure this string is valid
 function validateString(input) {
@@ -31,7 +31,7 @@ function validateNumberString(input) {
 
 // Validate password (must be at least 6 chars long and contain no spaces)
 function validatePassword(input) { 
-    return input.length > 5 && input.length <=50 && (input.indexOf(" ") == -1) && validateString(input);
+    return input.length > 5 && input.length <=50 && (input.indexOf(" ") == -1) && validateMessageString(input);
 }
 
 // Validate a first or last name
@@ -77,6 +77,11 @@ function validateZipCode(input) {
 // Validate phone number
 function validatePhone(input) {
 	return input.length == 10 && validateNumberString(input);
+}
+
+// Validate credit card number
+function validateCreditCard(input) {
+	return input.length == 16 && validateNumberString(input);
 }
 
 function isNumber(ch) {
