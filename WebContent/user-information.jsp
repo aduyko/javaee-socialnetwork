@@ -100,11 +100,11 @@ private static class UserData {
 <link rel="stylesheet" type="text/css"
 	href="/cse-305/Content/css/Circle/Circle.css" />
 	
-<link rel="stylesheet" type="text/css" href="/cse-305/styles/main_style.css" />
+<link rel="stylesheet" type="text/css" href="<%=SessionConstants.STYLE_SHEET_LOCATION%>" />
 
 <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 
-<script src="/cse-305/scripts/validation.js" type="text/javascript"></script>
+<script src="<%=SessionConstants.VALIDATION_LOCATION%>" type="text/javascript"></script>
 
 <script type="text/javascript">
 

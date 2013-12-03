@@ -84,6 +84,11 @@ function validateCreditCard(input) {
 	return input.length == 16 && validateNumberString(input);
 }
 
+// Validate social security number
+function validateSSN(input) {
+	return input.length == 9 && validateNumberString(input);
+}
+
 function isNumber(ch) {
 	return (ch > 47 && ch < 58);
 }

@@ -57,5 +57,31 @@ public class SessionConstants {
     public static final String CREATE_ACCOUNT_LOCATION = PRE + "/servlets/create_account.jsp";
     // Used for redirecting to update preferences
     public static final String UPDATE_PREFERENCES_LOCATION = PRE + "/servlets/update_preferences.jsp";
+    // Used for holding onto the id of the employee who is logged in
+    public static final String EMPLOYEE_ID = "employeeid";
+    // Used for holding onto the name of the employee who is logged in
+    public static final String EMPLOYEE_NAME = "employeename";
+    // Used for holding onto the type of the employee who is logged in
+    public static final String EMPLOYEE_TYPE = "employeetype";
+    // Used for holding onto the location of the employee login page
+    public static final String EMPLOYEE_LOGIN_PAGE_LOCATION = PRE + "/employee/e_login.jsp";
+    // Used for holding onto the location of the employee login scriptlet
+    public static final String EMPLOYEE_LOGIN_LOCATION = PRE + "/servlets/e_login.jsp";
+    // Used for holding onto the location of the employee home location
+    public static final String EMPLOYEE_HOME_LOCATION = PRE + "/employee/e_home.jsp";
+    // Used for redirecting to employee logout location
+    public static final String EMPLOYEE_LOGOUT_LOCATION = PRE + "/servlets/e_logout.jsp";
+    // Used for redirecting to employee and user search
+    public static final String EMPLOYEE_SEARCH_LOCATION = PRE + "/employee/e_search.jsp";
+    // Used for redirecting to update employee location
+    public static final String UPDATE_EMPLOYEE_LOCATION = PRE + "/servlets/update_employee.jsp";
+    // Used for holding onto the location of validation js
+    public static final String VALIDATION_LOCATION = PRE + "/scripts/validation.js";
+    // Used for holding onto the location of main_style.css
+    public static final String STYLE_SHEET_LOCATION = PRE + "/styles/main_style.css";
+    // Used for holding onto the location of the background image
+    public static final String BG_LOCATION = PRE + "/images/bg.jpg";
+    // Used for holding onto the delete button location
+    public static final String DELETE_BUTTON_LOCATION = PRE + "/images/btn_delete.png";
     
 }

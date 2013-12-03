@@ -47,11 +47,11 @@
 <link rel="stylesheet" type="text/css"
 	href="/cse-305/Content/css/Circle/Circle.css" />
 	
-<link rel="stylesheet" type="text/css" href="/cse-305/styles/main_style.css" />
+<link rel="stylesheet" type="text/css" href="<%=SessionConstants.STYLE_SHEET_LOCATION%>" />
 
 <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 
-<script src="/cse-305/scripts/validation.js" type="text/javascript"></script>
+<script src="<%=SessionConstants.VALIDATION_LOCATION%>" type="text/javascript"></script>
 
 <script type="text/javascript">
 
@@ -162,7 +162,7 @@
 													<td>
 														<form id="<%=messageID%>_DeleteForm" action="<%=SessionConstants.DELETE_MESSAGE_LOCATION%>" method="post">
 															<input name="messageID" value="<%=messageID%>" style="display:none;" />
-															<a class="hoverHand" onclick="deleteMessage(<%=messageID%>)"><img src="/cse-305/images/btn_delete.png"></img></a>
+															<a class="hoverHand" onclick="deleteMessage(<%=messageID%>)"><img src="<%=SessionConstants.DELETE_BUTTON_LOCATION%>"></img></a>
 														</form>
 													</td>
 												</tr>
