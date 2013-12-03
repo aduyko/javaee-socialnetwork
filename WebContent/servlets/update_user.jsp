@@ -17,6 +17,7 @@
 	String phone = request.getParameter("phone");
 	String userID = request.getParameter("userID");
 	String password = request.getParameter("password");
+	String from = request.getParameter("from");
 	
 	if(firstName != null && lastName != null && email != null && gender != null && dob != null
 		&& address != null && city != null && state != null && zipcode != null && phone != null
@@ -63,6 +64,17 @@
 	    session.setAttribute(SessionConstants.ERROR, "Error updating user");
 	}
 	
-	response.sendRedirect(SessionConstants.HOME_LOCATION);
+	if(SessionConstants.EMPLOYEE_VIEW_USER_LOCATION.equals(from)) {
+		if(userID != null) {
+		    session.setAttribute(SessionConstants.E_VIEW_USER_ID, userID);
+		    response.sendRedirect(SessionConstants.EMPLOYEE_VIEW_USER_LOCATION);
+		}
+		else {
+		    response.sendRedirect(SessionConstants.EMPLOYEE_HOME_LOCATION);
+		}
+	}
+	else {
+		response.sendRedirect(SessionConstants.HOME_LOCATION);
+	}
 
 %>

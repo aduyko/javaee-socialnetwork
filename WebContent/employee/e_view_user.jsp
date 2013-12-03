@@ -62,23 +62,6 @@ private static class UserData {
 		}
 	}
 }
-private static class CircleData {
-    public String name;
-    public int circleID;
-    public CircleData(String name, int id) {
-        this.name=  name;
-        this.circleID = id;
-    }
-  }
-
-private static class CircleJoinRequest {
-    public CircleData circle;
-    public UserData user;
-    public CircleJoinRequest(CircleData circle, UserData user) {
-		this.circle = circle;
-		this.user = user;
-    }
-}
 private static class Account {
     public String creditCardNumber;
     public Integer userID;
@@ -114,13 +97,20 @@ private static class Purchase {
     }
 }
 %>
-
-
 <%
-	Integer userID = (Integer)session.getAttribute(SessionConstants.USERID);
-	String userName = (String)session.getAttribute(SessionConstants.USERNAME);
-	if(userID == null || userName == null) {
-	    response.sendRedirect(SessionConstants.LOGIN_LOCATION); 
+	// Make sure you can access the user you are trying to view
+	String userToDisplay = request.getParameter("userToDisplayID");
+	if(userToDisplay == null)
+		userToDisplay = (String)session.getAttribute(SessionConstants.E_VIEW_USER_ID);
+	if(userToDisplay == null)
+   		response.sendRedirect(SessionConstants.EMPLOYEE_HOME_LOCATION);
+	
+	// Make sure someone is logged in
+	Integer employeeID = (Integer)session.getAttribute(SessionConstants.EMPLOYEE_ID);
+	String employeeName = (String)session.getAttribute(SessionConstants.EMPLOYEE_NAME);
+	String employeeType = (String)session.getAttribute(SessionConstants.EMPLOYEE_TYPE);
+	if(employeeID == null || employeeName == null || employeeType == null) {
+    	response.sendRedirect(SessionConstants.EMPLOYEE_LOGIN_PAGE_LOCATION); 
 	}
 	else {
 %>
@@ -230,22 +220,6 @@ private static class Purchase {
 		}
 	}
 	
-	function declineCircleInvite(cID) {
-		$('#' + cID + '_DeclineInviteForm').submit();
-	}
-	
-	function acceptCircleInvite(cID) {
-		$('#' + cID + '_AcceptInviteForm').submit();
-	}
-	
-	function acceptCircleJoinRequest(cID, uID) {
-		$('#' + cID + '_' + uID + '_AcceptJoinForm').submit();
-	}
-	
-	function declineCircleJoinRequest(cID, uID) {
-		$('#' + cID + '_' + uID + '_DeclineJoinForm').submit();
-	}
-	
 	function displayAccountHistory(accID) {
 		$('#' + accID + '_accbtn').hide();
 		$('#' + accID + "_AccountHistory").fadeIn();
@@ -280,10 +254,10 @@ private static class Purchase {
 
 <body>
 	<!-- Include the header file -->
-	<jsp:include page="includes/header.jsp" />
+	<jsp:include page="../includes/e_header.jsp" />
 
 	<!-- Include the left side bar -->
-	<jsp:include page="includes/left_bar.jsp" />
+	<jsp:include page="../includes/e_left_bar.jsp" />
 
 	<div class="CircleCentral">
 
@@ -291,7 +265,7 @@ private static class Purchase {
 
 			<div class="messageBody">
 			
-				<h3 style="text-align: center;"> My Information </h3>
+				<h3 style="text-align: center;"> Users Information </h3>
 				
 				<hr />
 				
@@ -305,35 +279,14 @@ private static class Purchase {
 						sysprops.put("password", Database.DATABASE_PASSWORD);
 						conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
 						Statement stat = conn.createStatement();
-						ResultSet result = stat.executeQuery("Select * from user where User_Id=" + userID);
+						ResultSet result = stat.executeQuery("Select * from user where User_Id=" + userToDisplay);
 						if(result.next()) {
-						    UserData user = new UserData(result.getString("First_Name"), result.getString("Last_Name"), result.getString("Email_Address"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"), result.getString("Gender"), result.getDate("Date_Of_Birth"), userID);
-							ArrayList<CircleData> myOwnedCircles = new ArrayList<CircleData>();
-							ArrayList<CircleData> myCircleInvites = new ArrayList<CircleData>();
-							// Join requests for all of the users who want to join a circle you own
-							ArrayList<CircleJoinRequest> circleJoinRequests = new ArrayList<CircleJoinRequest>();
+						    UserData user = new UserData(result.getString("First_Name"), result.getString("Last_Name"), result.getString("Email_Address"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"), result.getString("Gender"), result.getDate("Date_Of_Birth"), Integer.parseInt(userToDisplay));
 							ArrayList<Account> accounts = new ArrayList<Account>();
 							ArrayList<String> preferences = new ArrayList<String>();
-							// Get all circles this user owns
-							result = stat.executeQuery("Select * from circle where Owner_Of_Circle=" + userID);
+							result = stat.executeQuery("Select * from account where User_Id = " + userToDisplay);
 							while(result.next()) {
-							    myOwnedCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
-							}
-							// Get all circles this user was invited to join
-							result = stat.executeQuery("Select c.Circle_Id, c.Circle_NAME from inviterequest i, circle c where c.Circle_Id = i.circle_ID and i.User_Id=" + userID);
-							while(result.next()) {
-							    myCircleInvites.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
-							}
-							// Go through all the circles you own and add all join requests for those circles to list
-							for(int x = 0; x < myOwnedCircles.size(); x++) {
-							    result = stat.executeQuery("Select u.First_Name, u.Last_Name, u.User_Id from joinrequest j, user u where j.User_Id = u.User_Id and j.Circle_Id= " + myOwnedCircles.get(x).circleID);
-								while(result.next()) {
-								    circleJoinRequests.add(new CircleJoinRequest(myOwnedCircles.get(x), new UserData(result.getString("First_Name"), result.getString("Last_Name"), null, null, null, null, null, null, null, null, result.getInt("User_Id"))));
-								}
-							}
-							result = stat.executeQuery("Select * from account where User_Id = " + userID);
-							while(result.next()) {
-							    accounts.add(new Account(result.getString("Credit_Card_Number"), userID, result.getInt("Account_Number"), result.getDate("Account_Creation_Date")));
+							    accounts.add(new Account(result.getString("Credit_Card_Number"), Integer.parseInt(userToDisplay), result.getInt("Account_Number"), result.getDate("Account_Creation_Date")));
 							}
 							// Go through each of the accounts and add all of the purchases to it
 							for(int x = 0; x < accounts.size(); x++) {
@@ -342,14 +295,15 @@ private static class Purchase {
 								   	accounts.get(x).purchases.add(new Purchase(result.getDate("Date"), result.getInt("Number_Of_Units"), result.getInt("cost"), result.getString("Item_Name"), result.getString("Company")));
 								}
 							}
-							result = stat.executeQuery("Select * from user_preferences where Id= " + userID);
+							result = stat.executeQuery("Select * from user_preferences where Id= " + userToDisplay);
 							while(result.next()) {
 							    preferences.add(result.getString("Preference"));
 							}
 							// Display user information
 							%>
 							<form id="infoForm" action="<%=SessionConstants.UPDATE_USER_LOCATION%>" method="post">
-								<input style="display:none" name="userID" value="<%=userID%>" />
+								<input style="display:none" name="userID" value="<%=userToDisplay%>" />
+								<input style="display:none;" name="from" value="<%=SessionConstants.EMPLOYEE_VIEW_USER_LOCATION%>"/>
 								<table style="width:100%">
 										<tr>
 											<td>
@@ -477,7 +431,8 @@ private static class Purchase {
 								<hr>
 								<h3 style="text-align:center;">Preferences</h3>
 								<form style="text-align:center" id="updatePreferencesForm" action="<%=SessionConstants.UPDATE_PREFERENCES_LOCATION%>" method="post">
-									<input style="display:none;" name="userID" value="<%= userID%>" />
+									<input style="display:none;" name="userID" value="<%= userToDisplay%>" />
+									<input style="display:none;" name="from" value="<%=SessionConstants.EMPLOYEE_VIEW_USER_LOCATION %>" />
 									<table style="border-collapse: separate; border-spacing: 0 5px;margin-left:auto; margin-right:auto;">
 										<tr>
 											<td>cars</td>
@@ -566,13 +521,14 @@ private static class Purchase {
 									}
 									else {
 									    %>
-									    <h5 style="text-align:center;">You do not have any accounts.</h5>
+									    <h5 style="text-align:center;"> User does not have any accounts.</h5>
 									    <%
 									}
 								%>
 								<center><a id="showCreateAccount" class="button">Create new account</a></center>
 								<form style="display:none;" id="createAccountForm" action="<%=SessionConstants.CREATE_ACCOUNT_LOCATION%>" method="post">
-									<input style="display:none;" name="userID" value="<%=userID%>"/>
+									<input style="display:none;" name="userID" value="<%=userToDisplay%>"/>
+									<input style="display:none;" name="from" value="<%=SessionConstants.EMPLOYEE_VIEW_USER_LOCATION%>" />
 									<table style="border-collapse: separate; border-spacing: 0 5px;margin-left:auto; margin-right:auto;">
 										<tr>
 											<td><input id="ccNumber" name="ccNumber" placeholder="Credit Card Number" type="text"/></td>
@@ -580,98 +536,12 @@ private static class Purchase {
 										</tr>
 									</table>
 								</form>
-								<hr>
-								<h3 style="text-align:center;">Circle Invites</h3>
-								<% 
-									if(myCircleInvites.size() > 0) {
-									    %>
-									    	<table class="messageTable">
-									    <%
-									    	for(int x = 0; x < myCircleInvites.size(); x++) {
-									    	    %>
-									    	    <tr>
-									    	    	<td><%=myCircleInvites.get(x).name%></td>
-									    	    	<td>
-									    	    		<form style="display:none;" id="<%=myCircleInvites.get(x).circleID%>_AcceptInviteForm" action="<%=SessionConstants.JOIN_CIRCLE_LOCATION%>" method="post">
-									    	    			<input name="fromPage" value="<%=SessionConstants.HOME_LOCATION%>" />
-									    	    			<input name="userID" value="<%=userID%>" />
-									    	    			<input name="circleID" value="<%=myCircleInvites.get(x).circleID%>" />
-									    	    		</form>
-									    	    		<a onClick="acceptCircleInvite(<%=myCircleInvites.get(x).circleID%>)" class="button">Join</a>
-									    	    	</td>
-									    	    	<td>
-									    	    		<form style="display:none;" id="<%=myCircleInvites.get(x).circleID%>_DeclineInviteForm" action="<%=SessionConstants.DECLINE_CIRCLE_INVITE_LOCATION%>" method="post">
-									    	    			<input name="userID" value="<%=userID%>" />
-									    	    			<input name="circleID" value="<%=myCircleInvites.get(x).circleID%>" />
-									    	    		</form>
-									    	    		<a onClick="declineCircleInvite(<%=myCircleInvites.get(x).circleID%>)" class="button">Decline</a>
-									    	    	</td>
-									    	    </tr>
-									    	    <%
-									    	}
-									    %>
-									    	</table>
-									    <%
-									}
-									else {
-									    %>
-									    	<h5 style="text-align:center;">You do not have any circle invites.</h5>
-									    <%
-									}
-								%>
-								<hr>
-								<h3 style="text-align:center;">Circle Join Requests Awaiting Your Approval</h3>
-								<% 
-									if(myOwnedCircles.size() > 0) {
-									    if(circleJoinRequests.size() > 0) {
-											%>
-												<table class="messageTable">
-											<%
-											for(int x = 0; x < circleJoinRequests.size(); x++) {
-											    %>
-											    	<tr>
-											    		<td><%=circleJoinRequests.get(x).user.firstName + " " + circleJoinRequests.get(x).user.lastName%></td>
-											    		<td><%=circleJoinRequests.get(x).circle.name%></td>
-											    		<td>
-											    			<form style="display:none;" id="<%=circleJoinRequests.get(x).circle.circleID%>_<%= circleJoinRequests.get(x).user.userID%>_AcceptJoinForm" action="<%=SessionConstants.INVITE_CIRCLE_LOCATION%>" method="post">
-									    	    				<input name="fromPage" value="<%=SessionConstants.HOME_LOCATION%>" />
-									    	    				<input name="userID" value="<%=circleJoinRequests.get(x).user.userID%>" />
-									    	    				<input name="circleID" value="<%=circleJoinRequests.get(x).circle.circleID%>" />
-									    	    			</form>
-											    			<a onClick="acceptCircleJoinRequest(<%=circleJoinRequests.get(x).circle.circleID%>,<%=circleJoinRequests.get(x).user.userID%>)" class="button">Accept</a>
-											    		</td>
-											    		<td>
-											    			<form style="display:none;" id="<%=circleJoinRequests.get(x).circle.circleID%>_<%= circleJoinRequests.get(x).user.userID%>_DeclineJoinForm" action="<%=SessionConstants.DECLINE_CIRCLE_JOIN_LOCATION%>" method="post">
-									    	    				<input name="userID" value="<%=circleJoinRequests.get(x).user.userID%>" />
-									    	    				<input name="circleID" value="<%=circleJoinRequests.get(x).circle.circleID%>" />
-									    	    			</form>
-											    			<a onclick="declineCircleJoinRequest(<%=circleJoinRequests.get(x).circle.circleID%>,<%=circleJoinRequests.get(x).user.userID%> )" class="button">Reject</a>
-											    		</td>
-											    	</tr>
-											    <%
-											}
-											%>
-												</table>
-											<%
-									    }
-									    else {
-											%>
-												<h5 style="text-align:center;">You do not have any requests to join a circle you own.</h5>
-											<%
-									    }
-									}
-									else {
-									    %>
-									    	<h5 style="text-align:center;">You do not own any circles.</h5>
-									    <%
-									}
-								%>
+								<br/>
+								<br/>
 							<%
 						}
 						else {
-						    session.removeAttribute(SessionConstants.USERID);
-						    session.removeAttribute(SessionConstants.USERNAME);
-						    response.sendRedirect(SessionConstants.LOGIN_LOCATION);
+						    response.sendRedirect(SessionConstants.EMPLOYEE_LOGOUT_LOCATION);
 						}
 					}
 					catch(Exception e){}
@@ -687,16 +557,16 @@ private static class Purchase {
 				%>
 				
 				<div class="error" style="text-align:center" id="error"><%=error == null ? "" : error %></div>
+				<br/>
 			</div>
 		
 		</div>
 	</div>
 	
-	<!-- Include the right side bar -->
-	<jsp:include page="includes/right_bar.jsp" />
+	<div class="CircleSideBarRight"></div>
 
 	<!-- Include the footer -->
-	<%@include file="includes/footer.html" %>
+	<%@include file="../includes/footer.html" %>
 
 </body>
 </html>

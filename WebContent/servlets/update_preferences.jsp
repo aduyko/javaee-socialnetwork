@@ -11,6 +11,7 @@
 	String lifeInsurance = request.getParameter("lifeinsurance");
 	String clothing = request.getParameter("clothing");
 	String toys = request.getParameter("toys");
+	String from = request.getParameter("from");
 	
 	if(userID != null) {
 		Connection conn = null;
@@ -49,6 +50,17 @@
 		session.setAttribute(SessionConstants.ERROR, "Error creating account.");
 	}
 	
-	response.sendRedirect(SessionConstants.HOME_LOCATION);
+	if(SessionConstants.EMPLOYEE_VIEW_USER_LOCATION.equals(from)) {
+		if(userID != null) {
+		    session.setAttribute(SessionConstants.E_VIEW_USER_ID, userID);
+		    response.sendRedirect(SessionConstants.EMPLOYEE_VIEW_USER_LOCATION);
+		}
+		else {
+		    response.sendRedirect(SessionConstants.EMPLOYEE_HOME_LOCATION);
+		}
+	}
+	else {
+		response.sendRedirect(SessionConstants.HOME_LOCATION);
+	}
 
 %>

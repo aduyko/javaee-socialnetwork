@@ -224,7 +224,7 @@ private static class UserData {
 							// A list of all of the circles that you own
 							ArrayList<CircleData> myOwnedCircles = new ArrayList<CircleData>();
 							// A list of all of the users preferences
-							ArrayList<String> theirPreferences = new ArrayList<String>();
+							//ArrayList<String> theirPreferences = new ArrayList<String>();
 							Class.forName(Database.JDBC_DRIVER).newInstance();
 							java.util.Properties sysprops = System.getProperties();
 							sysprops.put("user", Database.DATABASE_USERNAME);
@@ -257,10 +257,10 @@ private static class UserData {
 							    myOwnedCircles.add(new CircleData(result.getString("Circle_NAME"), result.getInt("Circle_Id")));
 							}
 							// A list of all of their user preferences
-							result = stat.executeQuery("select * from user_preferences where Id =" + userToDisplayID);
-							while(result.next()) {
-							    theirPreferences.add(result.getString("Preference"));
-							}
+							//result = stat.executeQuery("select * from user_preferences where Id =" + userToDisplayID);
+							//while(result.next()) {
+							  //  theirPreferences.add(result.getString("Preference"));
+							//}
 							%>
 								<h1 style="text-align: center;">Viewing <%=usersInfo.firstName + " " + usersInfo.lastName%></h1>
 								<hr>
@@ -287,27 +287,6 @@ private static class UserData {
 												<tr>
 													<td>Date of Birth:</td>
 													<td><input style="padding-left:10px;" type="text" value="<%=usersInfo.dateOfBirth%>" size="<%=usersInfo.dateOfBirth.length()%>" disabled></td>
-												</tr>
-												<tr>
-													<td>Preferences:</td>
-													<td><span style="padding-left:10px;"><% 
-															if(theirPreferences.size() > 0) {
-										    			%>
-										    					<%=theirPreferences.get(0)%>
-										    			<%
-										    					for(int x = 1; x < theirPreferences.size(); x++) {
-														%>
-																	<%=", " + theirPreferences.get(x)%>
-														<%
-										    					}
-															}
-															else {
-										    			%>
-										    						None
-										    			<%
-															}
-														%></span>
-													</td>
 												</tr>
 											</table>
 										</td>

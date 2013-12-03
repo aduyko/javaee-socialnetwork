@@ -36,6 +36,10 @@
 
 <script type="text/javascript">
 
+	function submitUserForm(uID) {
+		$('#' + uID + '_UserForm').submit();
+	}
+
 </script>
 
 </head>
@@ -89,11 +93,10 @@
 							%>
 								<tr>
 									<td>
-										<form id="<%=searchUserID%>_Form" action="<%=SessionConstants.USER_INFORMATION_LOCATION%>" method="post">
+										<form id="<%=searchUserID%>_UserForm" action="<%=SessionConstants.EMPLOYEE_VIEW_USER_LOCATION%>" method="post">
 											<input style="display:none;" name="userToDisplayID" value="<%=searchUserID%>" />
-											<input style="display:none;" name="userToDisplayName" value="<%=firstName + " " + lastName%>" />
 										</form>
-										<a onclick="submitForm(<%=searchUserID%>)" href="#"><%=firstName + " " + lastName%></a>
+										<a onclick="submitUserForm(<%=searchUserID%>)" href="#"><%=firstName + " " + lastName%></a>
 									</td>
 								</tr>
 							<%
@@ -129,11 +132,11 @@
 							%>
 								<tr>
 									<td>
-										<form id="<%=searchEmployeeID%>_Form" action="<%=SessionConstants.USER_INFORMATION_LOCATION%>" method="post">
+										<form id="<%=searchEmployeeID%>_EmployeeForm" action="" method="post">
 											<input style="display:none;" name="userToDisplayID" value="<%=searchEmployeeID%>" />
 											<input style="display:none;" name="userToDisplayName" value="<%=firstName + " " + lastName%>" />
 										</form>
-										<a onclick="submitForm(<%=searchEmployeeID%>)" href="#"><%=firstName + " " + lastName%></a>
+										<a onclick="submitEmployeeForm(<%=searchEmployeeID%>)" href="#"><%=firstName + " " + lastName%></a>
 									</td>
 								</tr>
 							<%

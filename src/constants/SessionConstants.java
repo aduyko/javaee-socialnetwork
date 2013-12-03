@@ -23,6 +23,8 @@ public class SessionConstants {
     public static final String VIEW_USER = "viewuser";
     // Used for holding the name of the user that was being viewed on user-information page
     public static final String VIEW_USER_NAME = "viewusersname";
+    // Used for holding onto the name of the user being viewed by an employee
+    public static final String E_VIEW_USER_ID = "eviewuser";
     // User for redirecting to the main page
     public static final String HOME_LOCATION = PRE + "/home.jsp";
     // Used for redirecting to the login page
@@ -75,6 +77,8 @@ public class SessionConstants {
     public static final String EMPLOYEE_SEARCH_LOCATION = PRE + "/employee/e_search.jsp";
     // Used for redirecting to update employee location
     public static final String UPDATE_EMPLOYEE_LOCATION = PRE + "/servlets/update_employee.jsp";
+    // Used for redirecting to the employee view user location
+    public static final String EMPLOYEE_VIEW_USER_LOCATION = PRE + "/employee/e_view_user.jsp";
     // Used for holding onto the location of validation js
     public static final String VALIDATION_LOCATION = PRE + "/scripts/validation.js";
     // Used for holding onto the location of main_style.css
