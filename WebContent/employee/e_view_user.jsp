@@ -642,7 +642,7 @@ private static class Advertisement {
 	<div class="CircleSideBarRight"></div>
 
 	<!-- Include the footer -->
-	<%@include file="../includes/footer.html" %>
+	<%@include file="../includes/footer.jsp" %>
 
 </body>
 </html>

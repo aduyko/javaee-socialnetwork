@@ -768,7 +768,7 @@ private static class Advertisement {
 	<jsp:include page="includes/right_bar.jsp" />
 
 	<!-- Include the footer -->
-	<%@include file="includes/footer.html" %>
+	<%@include file="includes/footer.jsp" %>
 
 </body>
 </html>

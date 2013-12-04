@@ -89,6 +89,12 @@ public class SessionConstants {
     public static final String CREATE_EMPLOYEE_LOCATION = PRE + "/servlets/create_employee.jsp";
     // Used for redirecting to delete employee location
     public static final String DELETE_EMPLOYEE_LOCATION = PRE + "/servlets/delete_employee.jsp";
+    // Used for redirecting to programmers guide
+    public static final String PROGRAMMERS_GUIDE_LOCATION = PRE + "/ProgrammersGuide/programmersGuide.jsp";
+    // Used for redirecting to user help menu
+    public static final String USER_HELP_MENU_LOCATION = PRE + "/help_menu.jsp";
+    // Used for redirectin to employee help menu
+    public static final String EMPLOYEE_HELP_MENU_LOCATION = PRE + "/employee/e_help_menu.jsp";
     // Used for holding onto the location of validation js
     public static final String VALIDATION_LOCATION = PRE + "/scripts/validation.js";
     // Used for holding onto the location of main_style.css

@@ -10,6 +10,7 @@
 					placeholder="Search for a user" style="width: 350px;">
 				<input type="submit" class="submitCircleSearch"/>
 				<span style="float:right;">
+					<span style="margin-right:5px;"><a href="<%=SessionConstants.USER_HELP_MENU_LOCATION%>">Help Menu</a></span>
 					<%=session.getAttribute(SessionConstants.USERNAME) %>
 					<a href="<%=SessionConstants.USER_LOGOUT_LOCATION%>">Logout</a>
 				</span>

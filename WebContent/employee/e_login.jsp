@@ -88,6 +88,9 @@ html {
 		%>
 		<%=error == null ? "" : "* " + error%>
 	</div>
+	<br />
+	<br />
+	<a href="<%=SessionConstants.EMPLOYEE_HELP_MENU_LOCATION%>">Help Menu</a>
 
 </div>
 <%
