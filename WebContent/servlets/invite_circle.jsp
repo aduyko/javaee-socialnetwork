@@ -14,6 +14,8 @@
 	
 	if(circleID != null && userID != null) {
 		Connection conn = null;
+		Statement stat = null;
+		ResultSet result = null;
 		try {
 		 	// Connect to the jdbc driver and tell it your database credentials
 			Class.forName(Database.JDBC_DRIVER).newInstance();
@@ -21,8 +23,8 @@
 			sysprops.put("user", Database.DATABASE_USERNAME);
 			sysprops.put("password", Database.DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
-			Statement stat = conn.createStatement();
-			ResultSet result = stat.executeQuery("Select * from joinrequest where User_Id=" + userID + " and Circle_Id=" + circleID);
+			stat = conn.createStatement();
+			result = stat.executeQuery("Select * from joinrequest where User_Id=" + userID + " and Circle_Id=" + circleID);
 			// This user has already requested to join the circle, add them to the circle
 			if(result.next()) {
 			    stat.executeUpdate("delete from joinrequest where User_Id=" + userID + " and Circle_Id=" + circleID);
@@ -36,6 +38,8 @@
 		catch(Exception e) { session.setAttribute(SessionConstants.ERROR, "Error inviting to circle"); }
 		finally{
 		    try{
+				result.close();
+				stat.close();
 				conn.close();
 		    }
 		    catch(Exception e) {}

@@ -96,6 +96,23 @@ private static class Purchase {
 		this.companyName = companyName;
     }
 }
+private static class Advertisement {
+    public Integer advertisementID;
+    public String company;
+    public String itemName;
+    public String description;
+    public Integer price;
+    public Integer stock;
+    
+    public Advertisement(Integer id, String company, String itemName, String description, Integer price, Integer stock) {
+		this.advertisementID = id;
+		this.company = company;
+		this.itemName = itemName;
+		this.description = description;
+		this.price = price;
+		this.stock = stock;
+    }
+}
 %>
 <%
 	// Make sure you can access the user you are trying to view
@@ -242,6 +259,13 @@ private static class Purchase {
 		$('#updatePreferences').click(function(){
 			$('#updatePreferencesForm').submit();
 		});
+		$('#tryDeleteButton').click(function(){
+			$('#tryDeleteButton').hide();
+			$('#deleteAlert').fadeIn();
+		});
+		$('#deleteButton').click(function(){
+			$('#deleteForm').submit();
+		});
 		
 		setTimeout(function(){
 			$('#error').fadeOut();
@@ -284,6 +308,7 @@ private static class Purchase {
 						    UserData user = new UserData(result.getString("First_Name"), result.getString("Last_Name"), result.getString("Email_Address"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"), result.getString("Gender"), result.getDate("Date_Of_Birth"), Integer.parseInt(userToDisplay));
 							ArrayList<Account> accounts = new ArrayList<Account>();
 							ArrayList<String> preferences = new ArrayList<String>();
+							ArrayList<Advertisement> recommendedItems = new ArrayList<Advertisement>();
 							result = stat.executeQuery("Select * from account where User_Id = " + userToDisplay);
 							while(result.next()) {
 							    accounts.add(new Account(result.getString("Credit_Card_Number"), Integer.parseInt(userToDisplay), result.getInt("Account_Number"), result.getDate("Account_Creation_Date")));
@@ -298,6 +323,10 @@ private static class Purchase {
 							result = stat.executeQuery("Select * from user_preferences where Id= " + userToDisplay);
 							while(result.next()) {
 							    preferences.add(result.getString("Preference"));
+							}
+							result= stat.executeQuery("Select a.* from advertisement a, (select a.* from purchase p, advertisement a, account ac where ac.User_Id = "+ userToDisplay +" and ac.Account_Number = p.Account and a.advertisement_id = p.Advertisement ) as past where a.Type = past.Type and a.Available_Units > 0");
+							while(result.next()) {
+							    recommendedItems.add(new Advertisement(result.getInt("Advertisement_Id"), result.getString("Company"), result.getString("Item_Name"), result.getString("Content"), result.getInt("Unit_Price"), result.getInt("Available_Units")));
 							}
 							// Display user information
 							%>
@@ -425,8 +454,14 @@ private static class Purchase {
 									</table>
 								</form>
 								<div style="text-align:center;">
+									<a id="tryDeleteButton" class="delete-button">Delete User</a>
 									<a id="editButton" class="button">Edit</a>
 									<a id="submitButton" class="button" style="display:none;'">Submit Changes</a>
+									<div id="deleteAlert" style="display:none;">Are you sure you want to delete this user?<a id="deleteButton" class="delete-button">Yes I'm Sure</a></div>
+									<form id="deleteForm" style="display:none;" action="<%=SessionConstants.DELETE_USER_LOCATION%>" method="post">
+										<input name="userID" value="<%=userToDisplay%>" />
+										<input name="to" value="<%=SessionConstants.EMPLOYEE_HOME_LOCATION%>" />
+									</form>
 								</div>
 								<hr>
 								<h3 style="text-align:center;">Preferences</h3>
@@ -536,6 +571,47 @@ private static class Purchase {
 										</tr>
 									</table>
 								</form>
+								<hr>
+								
+								<h3 style="text-align:center;">Recommended Items</h3>
+								
+								<% 
+									if(recommendedItems.size() > 0) {
+								%>
+										<table class="messageTable">
+											<tr>
+												<th>Advertisement ID</th>
+												<th>Company</th>
+												<th>Item Name</th>
+												<th>Description</th>
+												<th>Price</th>
+												<th>Stock</th>
+											</tr>
+										<% 
+											for(int x = 0; x < recommendedItems.size(); x++) {
+										%>
+												<tr>
+													<td><%=recommendedItems.get(x).advertisementID%></td>
+													<td><%=recommendedItems.get(x).company%></td>
+													<td><%=recommendedItems.get(x).itemName%></td>
+													<td><%=recommendedItems.get(x).description%></td>
+													<td><%=recommendedItems.get(x).price%></td>
+													<td><%=recommendedItems.get(x).stock%></td>
+												</tr>
+										<%
+											}
+										%>
+										</table>
+								<%
+									}
+									else {
+								%>
+									<h5 style="text-align:center;"> No items to recommend.</h5>
+								<% 
+									}
+								%>
+								
+								
 								<br/>
 								<br/>
 							<%

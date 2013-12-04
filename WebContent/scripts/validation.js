@@ -89,6 +89,11 @@ function validateSSN(input) {
 	return input.length == 9 && validateNumberString(input);
 }
 
+// Validate employee salary
+function validateSalary(input) {
+	return input.length > 0 && validateNumberString(input);
+}
+
 function isNumber(ch) {
 	return (ch > 47 && ch < 58);
 }

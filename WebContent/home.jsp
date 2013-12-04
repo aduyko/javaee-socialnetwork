@@ -113,6 +113,23 @@ private static class Purchase {
 		this.companyName = companyName;
     }
 }
+private static class Advertisement {
+    public Integer advertisementID;
+    public String company;
+    public String itemName;
+    public String description;
+    public Integer price;
+    public Integer stock;
+    
+    public Advertisement(Integer id, String company, String itemName, String description, Integer price, Integer stock) {
+		this.advertisementID = id;
+		this.company = company;
+		this.itemName = itemName;
+		this.description = description;
+		this.price = price;
+		this.stock = stock;
+    }
+}
 %>
 
 
@@ -268,6 +285,13 @@ private static class Purchase {
 		$('#updatePreferences').click(function(){
 			$('#updatePreferencesForm').submit();
 		});
+		$('#tryDeleteButton').click(function(){
+			$('#tryDeleteButton').hide();
+			$('#deleteAlert').fadeIn();
+		});
+		$('#deleteButton').click(function(){
+			$('#deleteForm').submit();
+		});
 		
 		setTimeout(function(){
 			$('#error').fadeOut();
@@ -314,6 +338,7 @@ private static class Purchase {
 							ArrayList<CircleJoinRequest> circleJoinRequests = new ArrayList<CircleJoinRequest>();
 							ArrayList<Account> accounts = new ArrayList<Account>();
 							ArrayList<String> preferences = new ArrayList<String>();
+							ArrayList<Advertisement> recommendedItems = new ArrayList<Advertisement>();
 							// Get all circles this user owns
 							result = stat.executeQuery("Select * from circle where Owner_Of_Circle=" + userID);
 							while(result.next()) {
@@ -345,6 +370,10 @@ private static class Purchase {
 							result = stat.executeQuery("Select * from user_preferences where Id= " + userID);
 							while(result.next()) {
 							    preferences.add(result.getString("Preference"));
+							}
+							result= stat.executeQuery("select a.* from advertisement a, user_preferences u where a.Type = u.Preference and u.Id= " + userID);
+							while(result.next()) {
+							    recommendedItems.add(new Advertisement(result.getInt("Advertisement_Id"), result.getString("Company"), result.getString("Item_Name"), result.getString("Content"), result.getInt("Unit_Price"), result.getInt("Available_Units")));
 							}
 							// Display user information
 							%>
@@ -471,8 +500,14 @@ private static class Purchase {
 									</table>
 								</form>
 								<div style="text-align:center;">
+									<a id="tryDeleteButton" class="delete-button">Delete Account</a>
 									<a id="editButton" class="button">Edit</a>
 									<a id="submitButton" class="button" style="display:none;'">Submit Changes</a>
+									<div id="deleteAlert" style="display:none;">Are you sure you want to delete your account?<a id="deleteButton" class="delete-button">Yes I'm Sure</a></div>
+									<form id="deleteForm" style="display:none;" action="<%=SessionConstants.DELETE_USER_LOCATION%>" method="post">
+										<input name="userID" value="<%=userID%>" />
+										<input name="to" value="<%=SessionConstants.USER_LOGOUT_LOCATION%>" />
+									</form>
 								</div>
 								<hr>
 								<h3 style="text-align:center;">Preferences</h3>
@@ -664,6 +699,43 @@ private static class Purchase {
 									    %>
 									    	<h5 style="text-align:center;">You do not own any circles.</h5>
 									    <%
+									}
+								%>
+									<hr>
+								
+									<h3 style="text-align:center;">Recommended Items</h3>
+								
+								<% 
+									if(recommendedItems.size() > 0) {
+								%>
+										<table class="messageTable">
+											<tr>
+												<th>Company</th>
+												<th>Item Name</th>
+												<th>Description</th>
+												<th>Price</th>
+												<th>Stock</th>
+											</tr>
+										<% 
+											for(int x = 0; x < recommendedItems.size(); x++) {
+										%>
+												<tr>
+													<td><%=recommendedItems.get(x).company%></td>
+													<td><%=recommendedItems.get(x).itemName%></td>
+													<td><%=recommendedItems.get(x).description%></td>
+													<td><%=recommendedItems.get(x).price%></td>
+													<td><%=recommendedItems.get(x).stock%></td>
+												</tr>
+										<%
+											}
+										%>
+										</table>
+								<%
+									}
+									else {
+								%>
+									<h5 style="text-align:center;"> No items to recommend.</h5>
+								<% 
 									}
 								%>
 							<%

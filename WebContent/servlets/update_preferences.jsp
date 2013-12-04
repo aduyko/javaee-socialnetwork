@@ -15,6 +15,7 @@
 	
 	if(userID != null) {
 		Connection conn = null;
+		Statement stat = null;
 		try {
 		 	// Connect to the jdbc driver and tell it your database credentials
 			Class.forName(Database.JDBC_DRIVER).newInstance();
@@ -22,7 +23,7 @@
 			sysprops.put("user", Database.DATABASE_USERNAME);
 			sysprops.put("password", Database.DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
-			Statement stat = conn.createStatement();
+			stat = conn.createStatement();
 			stat.executeUpdate("delete from user_preferences where Id = " + userID);
 			if("on".equals(cars)) {
 			    stat.executeUpdate("insert into user_preferences(Id,Preference) values(" + userID + ",'cars') ");
@@ -41,6 +42,7 @@
 		catch(Exception e) { session.setAttribute(SessionConstants.ERROR, "Error creation account."); }
 		finally{
 		    try{
+				stat.close();
 				conn.close();
 		    }
 		    catch(Exception e) {}

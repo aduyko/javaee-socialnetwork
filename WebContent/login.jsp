@@ -34,6 +34,7 @@ html {
 	
 	// Sign the user up
 	function signUp(){
+		removeErrors();
 		var validated = true;
 		if(!validatePassword($('#password_signup').val())) {
 			validated = false;

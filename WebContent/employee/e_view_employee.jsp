@@ -63,6 +63,13 @@ private static class EmployeeData {
 
 
 <%
+	// Make sure there is an employee to view
+	String employeeToView = request.getParameter("empID");
+	if(employeeToView == null)
+	    employeeToView = (String)session.getAttribute(SessionConstants.VIEW_EMPLOYEE_ID);
+	if(employeeToView == null)
+		response.sendRedirect(SessionConstants.EMPLOYEE_HOME_LOCATION);
+
 	Integer employeeID = (Integer)session.getAttribute(SessionConstants.EMPLOYEE_ID);
 	String employeeName = (String)session.getAttribute(SessionConstants.EMPLOYEE_NAME);
 	String employeeType = (String)session.getAttribute(SessionConstants.EMPLOYEE_TYPE);
@@ -106,8 +113,10 @@ private static class EmployeeData {
 				$(this).val("");
 		});
 		$('#startDate').prop('disabled', true);
-		$('#role').prop('disabled', true);
-		$('#rate').prop('disabled', true);
+		$('#role').hide();
+		$('#roleSelector').val($('#role').val());
+		$('#roleSelector').show();
+		
 	}
 	
 	function removeErrors(){
@@ -126,6 +135,11 @@ private static class EmployeeData {
 		if(!validateName($('#lName').val())) {
 			validated = false;
 			$('#lName').addClass('input-error');
+		}
+		
+		if(!validateSalary($('#rate').val())) {
+			validated = false;
+			$('#rate').addClass('input-error');
 		}
 		
 		if(($('#address').val().length > 0) && !validateAddress($('#address').val())) {
@@ -149,39 +163,11 @@ private static class EmployeeData {
 		}
 		
 		if(validated) {
+			var role = $('#roleSelector').val();
 			var state = $('#stateSelector').val() == "None Specified" ? "" : $('#stateSelector').val();
 			$('#infoForm').append('<input name="state" style="display:none;" value="' + state + '" />');
+			$('#infoForm').append('<input name="role" style="display:none;" value="' + role + '" />');
 			$('#infoForm').submit();
-		}
-	}
-	
-	// Create an employee
-	function createEmployee(){
-		removeErrors();
-		var validated = true;
-		if(!validateSSN($('#ssn_signup').val())) {
-			$('#ssn_signup').addClass('input-error');
-			validated = false;
-		}
-		if(!validateSalary($('#salary_signup').val())) {
-			validated = false;
-			$('#salary_signup').addClass('input-error');
-		}
-		if(!validatePassword($('#password_signup').val())) {
-			validated = false;
-			$('#password_signup').addClass('input-error');
-		}
-		if(!validateName($('#fname_signup').val())) {
-			validated = false;
-			$('#fname_signup').addClass('input-error');
-		}
-		if(!validateName($('#lname_signup').val())) {
-			validated = false;
-			$('#lname_signup').addClass('input-error');
-		}
-		if(validated) {
-			$('#signup_form').append('<input name="role" style="display:none;" value="' + $('#roleSelector').val() + '" />');
-			$('#signup_form').submit();
 		}
 	}
 
@@ -191,9 +177,6 @@ private static class EmployeeData {
 		});
 		$('#submitButton').click(function(){
 			submitChanges();
-		});
-		$('#btn_signup').click(function(){
-			createEmployee();
 		});
 		$('#tryDeleteButton').click(function(){
 			$('#tryDeleteButton').hide();
@@ -225,7 +208,7 @@ private static class EmployeeData {
 
 			<div class="messageBody">
 			
-				<h3 style="text-align: center;"> My Information </h3>
+				<h3 style="text-align: center;"> Employee Information </h3>
 				
 				<hr />
 				
@@ -239,13 +222,14 @@ private static class EmployeeData {
 						sysprops.put("password", Database.DATABASE_PASSWORD);
 						conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
 						Statement stat = conn.createStatement();
-						ResultSet result = stat.executeQuery("Select * from employee where Employee_Id=" + employeeID);
+						ResultSet result = stat.executeQuery("Select * from employee where Employee_Id=" + employeeToView);
 						if(result.next()) {
 						    EmployeeData employee = new EmployeeData(result.getInt("Employee_Id"), result.getInt("SSN") ,result.getString("First_Name"), result.getString("Last_Name"), result.getInt("Hourly_Rate"), result.getDate("Start_Date"), result.getString("Role"), result.getString("Address"), result.getString("City"), result.getString("State"), result.getString("Zip_Code"), result.getString("Telephone"));
 							// Display user information
 							%>
 							<form id="infoForm" action="<%=SessionConstants.UPDATE_EMPLOYEE_LOCATION%>" method="post">
-								<input style="display:none" name="employeeID" value="<%=employeeID%>" />
+								<input style="display:none" name="from" value="<%=SessionConstants.VIEW_EMPLOYEE_LOCATION%>" />
+								<input style="display:none" name="employeeID" value="<%=employeeToView%>" />
 								<table style="width:100%">
 										<tr>
 											<td>
@@ -268,12 +252,24 @@ private static class EmployeeData {
 													</tr>
 													<tr>
 														<td>Role:</td>
-														<td><input id="role" style="padding-left:10px;" type="text" value="<%=employee.role %>" size="<%=employee.role.length()%>" disabled></td>
+														<td>
+															<input id="role" style="padding-left:10px;" type="text" value="<%=employee.role %>" size="<%=employee.role.length()%>" disabled>
+															<select id="roleSelector" style="display:none;">
+																<option value="Customer Representative" >Customer Representative</option>
+																<option value="Manager">Manager</option>
+															</select>
+														</td>
 													</tr>
+													<% 
+														if("Manager".equals(employeeType)) {
+													%>
 													<tr>
 														<td>Hourly Rate:</td>
-														<td><input id="rate" style="padding-left:10px;" type="text" value="<%=employee.hourlyRate %>" size="10" disabled></td>
+														<td><input name="rate" id="rate" style="padding-left:10px;" type="text" value="<%=employee.hourlyRate %>" size="10" disabled></td>
 													</tr>
+													<% 
+														}
+													%>
 												</table>
 											</td>
 											<td>
@@ -359,60 +355,23 @@ private static class EmployeeData {
 										</tr>
 									</table>
 								</form>
-								<div style="text-align:center;">
-									<a id="tryDeleteButton" class="delete-button">Delete Account</a>
-									<a id="editButton" class="button">Edit</a>
-									<a id="submitButton" class="button" style="display:none;'">Submit Changes</a>
-									<div id="deleteAlert" style="display:none;">Are you sure you want to delete your account?<a id="deleteButton" class="delete-button">Yes I'm Sure</a></div>
-									<form id="deleteForm" style="display:none;" action="<%=SessionConstants.DELETE_EMPLOYEE_LOCATION%>" method="post">
-										<input name="employeeID" value="<%=employeeID%>" />
-										<input name="to" value="<%=SessionConstants.EMPLOYEE_LOGOUT_LOCATION%>" />
-									</form>
-								</div>
+								<% 
+									if("Manager".equals(employeeType)) {
+								%>
+									<div style="text-align:center;">
+										<a id="tryDeleteButton" class="delete-button">Delete Employee</a>
+										<a id="editButton" class="button">Edit</a>
+										<a id="submitButton" class="button" style="display:none;'">Submit Changes</a>
+										<div id="deleteAlert" style="display:none;">Are you sure you want to delete this employee?<a id="deleteButton" class="delete-button">Yes I'm Sure</a></div>
+										<form id="deleteForm" style="display:none;" action="<%=SessionConstants.DELETE_EMPLOYEE_LOCATION%>" method="post">
+											<input name="employeeID" value="<%=employeeToView%>" />
+											<input name="to" value="<%=SessionConstants.EMPLOYEE_HOME_LOCATION%>" />
+										</form>
+									</div>
+								<% 
+									}
+								%>
 							<%
-								if("Manager".equals(employeeType)) {
-							%>
-									<hr>
-									<h3 style="text-align:center"> Create Employee</h3>
-									
-									<form id="signup_form" style="text-align:center;" action="<%=SessionConstants.CREATE_EMPLOYEE_LOCATION %>" method="post">
-										<table style="text-align:left; margin:auto; border-collapse: separate;border-spacing: 0 5px;">
-											<tr>
-												<td>SSN:</td>
-												<td><input id="ssn_signup" name="ssn" placeholder="SSN" type="text" /></td>
-											</tr>
-											<tr>
-												<td>First Name:</td>
-												<td><input id="fname_signup" name="first_name" placeholder="First Name" type="text" /></td>
-											</tr>
-											<tr>
-												<td>Last Name:</td>
-												<td><input id="lname_signup" name="last_name" placeholder="Last Name" type="text" /></td>
-											</tr>
-											<tr>
-												<td>Password:</td>
-												<td><input id="password_signup" name="password" placeholder="Password" type="password" /></td>
-											</tr>
-											<tr>
-												<td>Salary:</td>
-												<td><input id="salary_signup" name="rate" placeholder="Salary" type="text"/>  </td>
-											</tr>
-											<tr>
-												<td>Role:</td>
-												<td>
-													<select id="roleSelector">
-														<option value="Customer Representative">Customer Representative</option>
-														<option value="Manager">Manager</option>
-													</select>
-												</td>
-											</tr>
-										</table>
-										<br />
-										<a id="btn_signup" class="button">Create</a>
-										<input style="display:none;" name="mngr" value="<%=employeeID%>" />
-									</form>					
-							<%
-								}
 						}
 						else {
 						    response.sendRedirect(SessionConstants.EMPLOYEE_LOGOUT_LOCATION);

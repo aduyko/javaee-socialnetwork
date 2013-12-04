@@ -12,6 +12,8 @@
 	
 	if(creditCard != null && userID != null) {
 		Connection conn = null;
+		Statement stat = null;
+		ResultSet result = null;
 		try {
 		 	// Connect to the jdbc driver and tell it your database credentials
 			Class.forName(Database.JDBC_DRIVER).newInstance();
@@ -19,8 +21,8 @@
 			sysprops.put("user", Database.DATABASE_USERNAME);
 			sysprops.put("password", Database.DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
-			Statement stat = conn.createStatement();
-			ResultSet result = stat.executeQuery("select * from account where Credit_Card_Number = '" + creditCard + "'");
+			stat = conn.createStatement();
+			result = stat.executeQuery("select * from account where Credit_Card_Number = '" + creditCard + "'");
 			if(result.next()) {
 				session.setAttribute(SessionConstants.ERROR, "An account with this credit card number already exists");	    
 			}
@@ -31,6 +33,8 @@
 		catch(Exception e) { session.setAttribute(SessionConstants.ERROR, "Error creation account."); }
 		finally{
 		    try{
+				result.close();
+				stat.close();
 				conn.close();
 		    }
 		    catch(Exception e) {}

@@ -24,14 +24,16 @@
 		&& userID != null && password != null) {
 	    
 	    Connection conn = null;
+	    Statement stat = null;
+	    ResultSet result = null;
 	    try {
 			Class.forName(Database.JDBC_DRIVER).newInstance();
 			java.util.Properties sysprops = System.getProperties();
 			sysprops.put("user", Database.DATABASE_USERNAME);
 			sysprops.put("password", Database.DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
-			Statement stat = conn.createStatement();
-			ResultSet result = stat.executeQuery("select * from user where User_Id <>" + userID + " and Email_Address= '" + email + "'");
+			stat = conn.createStatement();
+			result = stat.executeQuery("select * from user where User_Id <>" + userID + " and Email_Address= '" + email + "'");
 			if(!result.next()) {
 			    // Nobody else has this email
 			    String update = "update user " +
@@ -55,6 +57,8 @@
 	    }catch(Exception e) {session.setAttribute(SessionConstants.ERROR, "Error updating user.");}
 	    finally {
 			try {
+			    result.close();
+			    stat.close();
 			    conn.close();
 			}
 			catch(Exception e) {}

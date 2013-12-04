@@ -16,6 +16,8 @@
 	if((username != null) && (password!= null) && (fname != null) && (lname!= null)) {
     	// Get a connection to the database
     	Connection conn = null;
+    	Statement stat = null;
+    	ResultSet result = null;
 		try {
 			// Connect to the jdbc driver and tell it your database credentials
 			Class.forName(Database.JDBC_DRIVER).newInstance();
@@ -23,8 +25,8 @@
 			sysprops.put("user", Database.DATABASE_USERNAME);
 			sysprops.put("password", Database.DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
-			Statement stat = conn.createStatement();
-			ResultSet result = stat.executeQuery("Select * from User where Email_Address='" + username + "'");
+			stat = conn.createStatement();
+			result = stat.executeQuery("Select * from User where Email_Address='" + username + "'");
 			if(!result.next()) {
 		    	// Nobody has this email address
 		    	stat.executeUpdate("Insert into User(First_Name, Last_Name, Email_Address, Password) Values('" + fname + "','" + lname + "','" + username + "','" + password + "')");
@@ -48,6 +50,8 @@
 		}
 		finally{
 		   	try {
+		   	    result.close();
+		   	    stat.close();
 				conn.close();
 		   	}
 		   	catch(Exception e) {}

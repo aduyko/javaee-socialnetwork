@@ -13,19 +13,21 @@
 	
 	if(content != null && subject != null && to != null && from != null) {
 	    Connection conn = null;
+	    Statement stat = null;
 	    try {
 			Class.forName(Database.JDBC_DRIVER).newInstance();
 			java.util.Properties sysprops = System.getProperties();
 			sysprops.put("user", Database.DATABASE_USERNAME);
 			sysprops.put("password", Database.DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
-			Statement stat = conn.createStatement();
+			stat = conn.createStatement();
 			stat.executeUpdate("Insert into Message(Date, Subject, Content, Sender, Receiver) Values (NOW()	,'" + subject + "'	,'" + content + "'	," + from + "	," + to + ")");
 			session.setAttribute(SessionConstants.MSG_RESPONSE, "Message sent!");
 	    }
 	    catch(Exception e) { session.setAttribute(SessionConstants.MSG_RESPONSE, "Error sending message");}
 	    finally {
 			try {
+			    stat.close();
 			    conn.close();
 			}
 			catch(Exception e) {}

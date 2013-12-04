@@ -23,8 +23,10 @@ public class SessionConstants {
     public static final String VIEW_USER = "viewuser";
     // Used for holding the name of the user that was being viewed on user-information page
     public static final String VIEW_USER_NAME = "viewusersname";
-    // Used for holding onto the name of the user being viewed by an employee
+    // Used for holding onto the id of the user being viewed by an employee
     public static final String E_VIEW_USER_ID = "eviewuser";
+    // Used for holding on the id of the employee being viewed by another employee
+    public static final String VIEW_EMPLOYEE_ID = "eviewemployee";
     // User for redirecting to the main page
     public static final String HOME_LOCATION = PRE + "/home.jsp";
     // Used for redirecting to the login page
@@ -59,6 +61,8 @@ public class SessionConstants {
     public static final String CREATE_ACCOUNT_LOCATION = PRE + "/servlets/create_account.jsp";
     // Used for redirecting to update preferences
     public static final String UPDATE_PREFERENCES_LOCATION = PRE + "/servlets/update_preferences.jsp";
+    // Used to redirect to delete used location
+    public static final String DELETE_USER_LOCATION = PRE + "/servlets/delete_user.jsp";
     // Used for holding onto the id of the employee who is logged in
     public static final String EMPLOYEE_ID = "employeeid";
     // Used for holding onto the name of the employee who is logged in
@@ -79,6 +83,12 @@ public class SessionConstants {
     public static final String UPDATE_EMPLOYEE_LOCATION = PRE + "/servlets/update_employee.jsp";
     // Used for redirecting to the employee view user location
     public static final String EMPLOYEE_VIEW_USER_LOCATION = PRE + "/employee/e_view_user.jsp";
+    // Used for redirecting to the view employee location
+    public static final String VIEW_EMPLOYEE_LOCATION = PRE + "/employee/e_view_employee.jsp";
+    // Used for redirecting to the create employee location
+    public static final String CREATE_EMPLOYEE_LOCATION = PRE + "/servlets/create_employee.jsp";
+    // Used for redirecting to delete employee location
+    public static final String DELETE_EMPLOYEE_LOCATION = PRE + "/servlets/delete_employee.jsp";
     // Used for holding onto the location of validation js
     public static final String VALIDATION_LOCATION = PRE + "/scripts/validation.js";
     // Used for holding onto the location of main_style.css

@@ -11,6 +11,7 @@
 	
 	if(circleID != null && userID != null) {
 		Connection conn = null;
+		Statement stat = null;
 		try {
 		 	// Connect to the jdbc driver and tell it your database credentials
 			Class.forName(Database.JDBC_DRIVER).newInstance();
@@ -18,12 +19,13 @@
 			sysprops.put("user", Database.DATABASE_USERNAME);
 			sysprops.put("password", Database.DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
-			Statement stat = conn.createStatement();
+			stat = conn.createStatement();
 			stat.executeUpdate("delete from inviterequest where User_Id='" + userID + "' and Circle_Id='" + circleID + "'");
 		}
 		catch(Exception e) { session.setAttribute(SessionConstants.ERROR, "Error declining circle invite."); }
 		finally{
 		    try{
+				stat.close();
 				conn.close();
 		    }
 		    catch(Exception e) {}

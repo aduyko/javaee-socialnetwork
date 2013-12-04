@@ -14,6 +14,8 @@
 	if((username != null) && (password!= null)) {
     	// Get a connection to the database
     	Connection conn = null;
+    	Statement stat = null;
+    	ResultSet result = null;
 		try {
 			 // Connect to the jdbc driver and tell it your database credentials
 			Class.forName(Database.JDBC_DRIVER).newInstance();
@@ -21,8 +23,8 @@
 			sysprops.put("user", Database.DATABASE_USERNAME);
 			sysprops.put("password", Database.DATABASE_PASSWORD);
 			conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
-			Statement stat = conn.createStatement();
-			ResultSet result = stat.executeQuery("Select * from User where Email_Address='" + username + "' and Password='" + password + "'");
+			stat = conn.createStatement();
+			result = stat.executeQuery("Select * from User where Email_Address='" + username + "' and Password='" + password + "'");
 			if(result.next()) {
 			   	// Successful log in
 			   	session.setAttribute(SessionConstants.USERID, result.getInt("User_Id"));  
@@ -37,6 +39,8 @@
 		}
 		finally{
 		    try {
+				result.close();
+				stat.close();
 				conn.close();
 	    	}
 		   	catch(Exception e) {}

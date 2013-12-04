@@ -39,6 +39,10 @@
 	function submitUserForm(uID) {
 		$('#' + uID + '_UserForm').submit();
 	}
+	
+	function submitEmployeeForm(eID) {
+		$('#' + eID + '_EmployeeForm').submit();
+	}
 
 </script>
 
@@ -116,7 +120,6 @@
 						    query += " or (First_Name like '%" + tokens[1] + "%') or (Last_Name like '%" + tokens[1] + "%')";
 						}
 						query += ") and Employee_Id <> " + employeeID;
-						System.out.println(query);
 						result = stat.executeQuery(query);
 						%>
 							<h3>Employees</h3>
@@ -132,9 +135,8 @@
 							%>
 								<tr>
 									<td>
-										<form id="<%=searchEmployeeID%>_EmployeeForm" action="" method="post">
-											<input style="display:none;" name="userToDisplayID" value="<%=searchEmployeeID%>" />
-											<input style="display:none;" name="userToDisplayName" value="<%=firstName + " " + lastName%>" />
+										<form id="<%=searchEmployeeID%>_EmployeeForm" action="<%=SessionConstants.VIEW_EMPLOYEE_LOCATION%>" method="post">
+											<input style="display:none;" name="empID" value="<%=searchEmployeeID%>" />
 										</form>
 										<a onclick="submitEmployeeForm(<%=searchEmployeeID%>)" href="#"><%=firstName + " " + lastName%></a>
 									</td>
