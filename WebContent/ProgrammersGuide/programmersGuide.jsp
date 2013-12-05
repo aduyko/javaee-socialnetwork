@@ -26,6 +26,8 @@ html {
 		<a href="DatabaseSchema.pdf">Database Schema</a>
 		<br />
 		<a href="Transactions.pdf">Transactions</a>
+		<br />
+		<a href="jdbcArchitecture.pdf">User interface to database architecture</a>
 	</div>
 	<br/>
 	<br/>

@@ -9,19 +9,7 @@
 			</span>
 	</div>
 	<a href="<%=SessionConstants.BEST_SELLER_LIST%>">Best Seller List</a>
-
-	<div class="CirclesListOwner">
-		<span class="ListTitle">Circle Owner</span>
-		<ul class="OwnerList">
-				
-		</ul>
-	</div>
-
-	<div class="CirclesListMember">
-		<span class="ListTitle">Circle Member</span>
-		<ul class="MemberList">
-			
-		</ul>
-	</div>
+	<br />
+	<a href="/cse-305/CircleServlet?method=post">My Circles</a>
 
 </div>
