@@ -127,7 +127,8 @@ div.CircleCentral div.CircleBody div.UserPost div.CircleBodyMeta div.Members div
 	padding-bottom: 3px;
 }
 
-div.CircleCentral div.CircleBody div.UserPost div.CircleBodyMeta div.Members div#CircleMembersListDiv ul#CircleMembersList li div.UserMember{
+div.CircleCentral div.CircleBody div.UserPost div.CircleBodyMeta div.Members div#CircleMembersListDiv ul#CircleMembersList li div.UserMember
+	{
 	padding: 5px;
 }
 
@@ -197,6 +198,40 @@ div.CircleSideBarLeft div.CirclesListOwner ul.OwnerList {
 
 div.CircleCentral div.CircleBody div.CirclePosts ul.PostList {
 	list-style-type: none;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostEdit
+	{
+	width: 100%;
+	height: 10px;
+	opacity: 0;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList li div.CommentDiv div.CommentEdit
+	{
+	opacity: 0;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList li div.CommentDiv div.CommentEdit span.CommentEditSpan
+	{
+	float: right;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv div.PostDivComments ul.CommentList li div.CommentDiv div.CommentEdit span.CommentEditSpan i
+	{
+	border: 1px solid #dedede;
+	cursor: pointer;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostEdit span.PostEditSpan
+	{
+	float: right;
+}
+
+div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostEdit span.PostEditSpan i
+	{
+	border: 1px solid #dedede;
+	cursor: pointer;
 }
 
 div.CircleCentral div.CircleBody div.CirclePosts ul.PostList li div.PostDiv
@@ -359,12 +394,14 @@ div.CircleSideBarLeft div.CirclesListOwner span.ListTitle {
 	font-family: "Sans-serif";
 	color: #aeaeae;
 	margin-left: 5px;
+	font-size: 16px;
 }
 
 div.CircleSideBarLeft div.CirclesListMember span.ListTitle {
 	font-family: "Sans-serif";
 	color: #aeaeae;
 	margin-left: 5px;
+	font-size: 16px;
 }
 
 div.CircleSideBarRight {

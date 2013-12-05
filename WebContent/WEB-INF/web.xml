@@ -17,7 +17,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CircleServlet</servlet-name>
-		<url-pattern>/CircleServlet</url-pattern>
+		<url-pattern>/Circle</url-pattern>
 	</servlet-mapping>
     <welcome-file-list>
         <!--<welcome-file>FakeLogin.jsp</welcome-file>

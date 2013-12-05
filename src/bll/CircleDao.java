@@ -289,6 +289,8 @@ public class CircleDao {
 				System.out
 						.println("Log: Adding post to posts associated with this circle");
 
+				// Set the post like by current user flag if the current user
+				// liked a given post
 				Iterator<PostLike> postLikeIterator = likes_post.iterator();
 				while (postLikeIterator.hasNext()) {
 					if (curUserId == postLikeIterator.next().getUserId()) {
@@ -654,6 +656,232 @@ public class CircleDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param content
+	 * @param postId
+	 * @return
+	 */
+	public static boolean updatePost(String content, int postId) {
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "update post set Content=? where Post_Id=?;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setString(1, content);
+			ps.setInt(2, postId);
+
+			ps.executeUpdate();
+
+			ps.close();
+			conn.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * @param content
+	 * @param postId
+	 * @return
+	 */
+	public static boolean updateComment(String content, int commentId) {
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "update comment set Content=? where Comment_Id=?;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setString(1, content);
+			ps.setInt(2, commentId);
+
+			ps.executeUpdate();
+
+			ps.close();
+			conn.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static int createCircle(String name, String type, int ownerId) {
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "insert into circle(Circle_NAME, Owner_Of_Circle, Type) values(?, ?, ?);";
+
+		try {
+			ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, name);
+			ps.setInt(2, ownerId);
+			ps.setString(3, type);
+
+			ps.execute();
+			
+			long circleId = 0;
+			ResultSet res = ps.getGeneratedKeys();
+			res.next();
+			circleId = res.getLong(1);
+
+			query = "insert into addedto values(?, ?);";
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, ownerId);
+			ps.setInt(2, (int) circleId);
+
+			ps.executeUpdate();
+
+			ps.close();
+			conn.close();
+			return (int) circleId;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	/**
+	 * 
+	 * @param postId
+	 * @return
+	 */
+	public static boolean deletePost(int postId) {
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "delete from post where Post_Id=?;";
+
+		// Can delete likes and comments as well
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, postId);
+
+			ps.executeUpdate();
+
+			ps.close();
+			conn.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * @param postId
+	 * @return
+	 */
+	public static boolean unlikePost(int postId, int userId) {
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "delete from user_likes_post where User=? and Post=?;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, userId);
+			ps.setInt(2, postId);
+
+			ps.executeUpdate();
+
+			ps.close();
+			conn.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * @param postId
+	 * @return
+	 */
+	public static boolean unlikeComment(int commentId, int userId) {
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "delete from user_likes_comment where User=? and Comment=?;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, userId);
+			ps.setInt(2, commentId);
+
+			ps.execute();
+
+			ps.close();
+			conn.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param circleId
+	 */
+	public static boolean deleteCircle(int circleId){
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "delete from circle where Circle_Id=?;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, circleId);
+
+			ps.execute();
+
+			ps.close();
+			conn.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param circleId
+	 * @param name
+	 * @return
+	 */
+	public static boolean renameCircle(int circleId, String name){
+		Connection conn = Database.getConnection();
+		PreparedStatement ps;
+
+		String query = "update circle set Circle_NAME=? where Circle_Id=?;";
+
+		try {
+			ps = conn.prepareStatement(query);
+			ps.setString(1, name);
+			ps.setInt(2, circleId);
+
+			ps.executeUpdate();
+
+			ps.close();
+			conn.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 }

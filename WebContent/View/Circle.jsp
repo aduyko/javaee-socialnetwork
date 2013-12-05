@@ -14,6 +14,20 @@
 <link rel="stylesheet" type="text/css"
 	href="/cse-305/Content/css/jquery-ui-1.10.3.custom.min.css" />
 
+<style type="text/css">
+.ui-widget-overlay {
+	background: #555;
+}
+
+.ui-dialog .ui-dialog-content {
+	padding: 0;
+}
+
+.ui-dialog-titlebar {
+	display: none;
+}
+</style>
+
 <script type="text/javascript" src="/cse-305/Scripts/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="/cse-305/Scripts/Circle/Circle.js"></script>
 <script type="text/javascript"
@@ -30,12 +44,13 @@
 					<span class="CircleSearchLabel">Fb+</span> <input type="text"
 						class="input-medium search-query form-control"
 						placeholder="Search for Circle" style="width: 350px;">
-					<button type="submit" class="submitCircleSearch">Search</button>
+					<button type="submit" class="submitCircleSearch"
+						style="padding: 5px;">Search</button>
 				</div>
 			</form>
 
 			<div class="Logout" style="float: right;">
-				<a href="#">Logout</a>
+				<a href="#" style="font-size: 16px;">Logout</a>
 			</div>
 
 		</div>
@@ -43,10 +58,11 @@
 		<hr />
 	</div>
 
-	<div class="CircleSideBarLeft">
+	<div class="CircleSideBarLeft" style="margin-bottom: 30px;">
 
 		<div class="CurrentUser">
-			<span class="Username" style="color: #00a; font-weight: bold;">
+			<span class="Username"
+				style="color: #00a; font-weight: bold; font-size: 16px;">
 				${username}</span>
 		</div>
 
@@ -58,9 +74,13 @@
 						data-circleName="${circle.getName()}"
 						data-circleType="${circle.getType()}"><a
 						style="text-decoration: none;"
-						href="/cse-305/CircleServlet?action=ViewCircle&Id=
+						href="/cse-305/Circle?action=ViewCircle&Id=
 						${circle.getCircleId()}&Name=${circle.getName()}&Owner=Yes"><c:out
-								value="${circle.getName()}" /></a></li>
+								value="${circle.getName()}" /></a> <span class="CircleEdit"
+						style="opacity: 0;" data-circleId="${circle.getCircleId()}">
+							<i style="float: right;"
+							class="circleEditIcon glyphicon glyphicon-pencil"></i>
+					</span></li>
 				</c:forEach>
 			</ul>
 		</div>
@@ -72,11 +92,20 @@
 					<li class="MemberCircle" data-circleId="${circle.getCircleId()}"
 						data-circleName="${circle.getCircleName()}"><a
 						style="text-decoration: none;"
-						href="/cse-305/CircleServlet?action=ViewCircle&Id=
+						href="/cse-305/Circle?action=ViewCircle&Id=
 						${circle.getCircleId()}&Name=${circle.getCircleName()}&Owner=No"><c:out
-								value="${circle.getCircleName()}" /></a></li>
+								value="${circle.getCircleName()}" /></a> <span class="CircleEdit"
+						style="opacity: 0;" data-circleId="${circle.getCircleId()}">
+							<i style="float: right;"
+							class="circleEditIcon glyphicon glyphicon-pencil"></i>
+					</span></li>
 				</c:forEach>
 			</ul>
+		</div>
+
+		<div>
+			<button data-userid="${userid}" id="CreateCircle">+ Create
+				New Circle</button>
 		</div>
 
 	</div>
@@ -85,8 +114,8 @@
 		<div id="circle_main" class="CircleBody"
 			style="clear: both; overflow: hidden;">
 			<div class="CircleBodyHeader">
-				<a class="CircleName"
-					href="/cse-305/CircleServlet?action=ViewCircle&Id=${current_circle_id}">${current_circle_name}</a>
+				<a class="CircleName" id="ViewCurrentCircleHref"
+					href="/cse-305/Circle?action=ViewCircle&Id=${current_circle_id}">${current_circle_name}</a>
 			</div>
 
 			<div class="UserPost" style="clear: both; float: left;">
@@ -118,71 +147,129 @@
 					<ul id="Post_List" class="PostList">
 						<c:forEach items="${posts}" var="post">
 							<li>
-								<div class="PostDiv" style="padding: 3px;">
-									<a href="#?action=ViewUser&Uid=${post.getAuthorId()}"
-										style="display: block; color: #00a; font-weight: bold;">${post.getAuthorName()}</a>
-									<p style="display: block;">${post.getContent()}</p>
-									<div class="PostDivOptions">
-										<!-- See if the current user has already liked this post -->
+								<div class="PostSuperContainer">
+									<div class="PostEdit">
 										<c:choose>
-											<c:when test="${post.isCurrentUserLiked()}">
-												<span class="LikePost" data-postId="${post.getPostId()}"
-													data-userId="${userid}" data-likeStatus="Unlike">Unlike</span>
+											<c:when
+												test="${userid != post.getAuthorId() && circle_owner}">
+												<span class="PostEditSpan" data-postAuthor="false"
+													data-circleOwner="true" data-postId="${post.getPostId()}"
+													data-userId="${userid}"><i style="float: right;"
+													class="postEditIcon glyphicon glyphicon-chevron-down"></i></span>
 											</c:when>
-											<c:when test="${!post.isCurrentUserLiked()}">
-												<span class="LikePost" data-postId="${post.getPostId()}"
-													data-userId="${userid}" data-likeStatus="Like">Like</span>
+											<c:when
+												test="${userid == post.getAuthorId() && !circle_owner}">
+												<span class="PostEditSpan" data-postAuthor="true"
+													data-circleOwner="false" data-postId="${post.getPostId()}"
+													data-userId="${userid}"><i style="float: right;"
+													class="postEditIcon glyphicon glyphicon-pencil"></i></span>
+											</c:when>
+											<c:when
+												test="${userid == post.getAuthorId() && circle_owner}">
+												<span class="PostEditSpan" data-postAuthor="true"
+													data-circleOwner="true" data-postId="${post.getPostId()}"
+													data-userId="${userid}"><i style="float: right;"
+													class="postEditIcon glyphicon glyphicon-chevron-down"></i></span>
 											</c:when>
 										</c:choose>
-										<span class="PostComment" data-postId="${post.getPostId()}"
-											data-userId="${userid}" data-userName="${username}">Comment</span>
 									</div>
-									<div class="PostLikes">
-										<span><i class="glyphicon glyphicon-thumbs-up"></i> <span
-											class="PeoplePostLikeList">${post.getLikeCount()} </span><span>
-												people like this</span> </span>
-									</div>
-									<div class="PostDivComments">
-										<ul class="CommentList">
-											<c:forEach items="${post.getComments()}" var="comment">
-												<li>
-													<div class="CommentDiv">
-														<span
-															style="font-size: small; color: #00a; font-weight: bold;">${comment.getAuthorName()}</span>
-														<div>
-															<span>${comment.getContent()}</span>
+									<div class="PostDiv" style="padding: 3px; clear: both;">
+										<a href="#?action=ViewUser&Uid=${post.getAuthorId()}"
+											style="display: block; color: #00a; font-weight: bold;">${post.getAuthorName()}</a>
+										<p style="display: block;" class="PostContent">${post.getContent()}</p>
+										<div class="PostDivOptions">
+											<!-- See if the current user has already liked this post -->
+											<c:choose>
+												<c:when test="${post.isCurrentUserLiked()}">
+													<span class="LikePost" data-postId="${post.getPostId()}"
+														data-userId="${userid}" data-likeStatus="Unlike">Unlike</span>
+												</c:when>
+												<c:when test="${!post.isCurrentUserLiked()}">
+													<span class="LikePost" data-postId="${post.getPostId()}"
+														data-userId="${userid}" data-likeStatus="Like">Like</span>
+												</c:when>
+											</c:choose>
+											<span class="PostComment" data-postId="${post.getPostId()}"
+												data-userId="${userid}" data-userName="${username}">Comment</span>
+										</div>
+										<div class="PostLikes">
+											<span><i class="glyphicon glyphicon-thumbs-up"></i> <span
+												class="PeoplePostLikeList">${post.getLikeCount()} </span><span>
+													people like this</span> </span>
+										</div>
+										<div class="PostDivComments">
+											<ul class="CommentList">
+												<c:forEach items="${post.getComments()}" var="comment">
+													<li>
+														<div class="CommentDiv">
+															<span
+																style="font-size: small; color: #00a; font-weight: bold; float: left;">${comment.getAuthorName()}</span>
+															<div class="CommentEdit" style="float: right;">
+																<c:choose>
+																	<c:when
+																		test="${userid != comment.getAuthorId() && circle_owner}">
+																		<span class="CommentEditSpan"
+																			data-commentAuthor="false" data-circleOwner="true"
+																			data-commentId="${comment.getCommentId()}"
+																			data-userId="${userid}" data-userName="${username}"><i
+																			style="float: right;"
+																			class="commentEditIcon glyphicon glyphicon-chevron-down"></i></span>
+																	</c:when>
+																	<c:when
+																		test="${userid == comment.getAuthorId() && !circle_owner}">
+																		<span class="CommentEditSpan"
+																			data-commentAuthor="true" data-circleOwner="false"
+																			data-commentId="${comment.getCommentId()}"
+																			data-userId="${userid}" data-userName="${username}"><i
+																			style="float: right;"
+																			class="commentEditIcon glyphicon glyphicon-pencil"></i></span>
+																	</c:when>
+																	<c:when
+																		test="${userid == comment.getAuthorId() && circle_owner}">
+																		<span class="CommentEditSpan"
+																			data-commentAuthor="true" data-circleOwner="true"
+																			data-commentId="${comment.getCommentId()}"
+																			data-userId="${userid}" data-userName="${username}"><i
+																			style="float: right;"
+																			class="commentEditIcon glyphicon glyphicon-chevron-down"></i></span>
+																	</c:when>
+																</c:choose>
+															</div>
+															<div style="clear: both;" class="CommentContent">
+																<span>${comment.getContent()}</span>
+															</div>
+															<span
+																style="color: #aeaeae; font-size: small; margin-right: 3px;">${comment.getDate().toString()}</span>
+															<!-- See if the current user has already liked this comment -->
+															<c:choose>
+																<c:when test="${comment.isCurrentUserLiked()}">
+																	<span class="LikeComment"
+																		data-commentId="${comment.getCommentId()}"
+																		data-userId="${userid}" data-likeStatus="Unlike">
+																		Unlike</span>
+																</c:when>
+																<c:when test="${!comment.isCurrentUserLiked()}">
+																	<span class="LikeComment"
+																		data-commentId="${comment.getCommentId()}"
+																		data-userId="${userid}" data-likeStatus="Like">
+																		Like</span>
+																</c:when>
+															</c:choose>
+															<span><i class="glyphicon glyphicon-thumbs-up"></i><span
+																class="PeopleCommentLikeList">${comment.getLikeCount()}</span></span>
 														</div>
-														<span
-															style="color: #aeaeae; font-size: small; margin-right: 3px;">${comment.getDate().toString()}</span>
-														<!-- See if the current user has already liked this comment -->
-														<c:choose>
-															<c:when test="${comment.isCurrentUserLiked()}">
-																<span class="LikeComment"
-																	data-commentId="${comment.getCommentId()}"
-																	data-userId="$userid" data-likeStatus="Unlike">
-																	Unlike</span>
-															</c:when>
-															<c:when test="${!comment.isCurrentUserLiked()}">
-																<span class="LikeComment"
-																	data-commentId="${comment.getCommentId()}"
-																	data-userId="${userid}" data-likeStatus="Like">
-																	Like</span>
-															</c:when>
-														</c:choose>
-														<span><i class="glyphicon glyphicon-thumbs-up"></i><span
-															class="PeopleCommentLikeList">${comment.getLikeCount()}</span></span>
-													</div>
-												</li>
-											</c:forEach>
-										</ul>
-										<div class="WriteCommentDiv">
-											<input type="text" placeholder="write a comment.."
-												class="WriteComment" data-postId="${post.getPostId()}"
-												data-userId="${userid}" data-userName="${username}" />
+													</li>
+												</c:forEach>
+											</ul>
+											<div class="WriteCommentDiv">
+												<input type="text" placeholder="write a comment.."
+													class="WriteComment" data-postId="${post.getPostId()}"
+													data-userId="${userid}" data-userName="${username}" />
+											</div>
 										</div>
 									</div>
+									<hr style="color: #dedede; width: 517px; margin-left: -40px;" />
 								</div>
-								<hr style="color: #dedede; width: 517px; margin-left: -40px;" />
 							</li>
 						</c:forEach>
 					</ul>
@@ -218,8 +305,10 @@
 								<c:forEach items="${members}" var="member">
 									<li>
 										<div class="UserMember">
-										<span style="display:block; float: right;"><i class="glyphicon glyphicon-remove"></i></span>
-											<span style="display: block; clear: both;"><span
+											<span class="RemoveCircleMember"
+												style="display: block; float: right;"><i
+												class="glyphicon glyphicon-remove"></i></span> <span
+												style="display: block; clear: both;"><span
 												style="font-weight: bold;">Member: </span>${member.toString()}</span>
 											<span style="display: block;"><span
 												style="font-weight: bold;">Contact:</span>

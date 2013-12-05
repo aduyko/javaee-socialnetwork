@@ -10,7 +10,7 @@
 	<%
 		session.setAttribute("userid", 100100101);
 		session.setAttribute("username", "Alice");
-		response.sendRedirect("/cse-305/CircleServlet?action=Home");
+		response.sendRedirect("/cse-305/Circle?action=Home");
 	%>
 </body>
 </html>

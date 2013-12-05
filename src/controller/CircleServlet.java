@@ -303,13 +303,6 @@ public class CircleServlet extends HttpServlet {
 					writer.close();
 				}
 
-				try {
-					writer = response.getWriter();
-					writer.write(json);
-				} finally {
-					writer.close();
-				}
-
 			} else {
 				// Session expired, redirect to login
 			}
@@ -344,18 +337,10 @@ public class CircleServlet extends HttpServlet {
 					writer.close();
 				}
 
-				try {
-					writer = response.getWriter();
-					writer.write(json);
-				} finally {
-					writer.close();
-				}
-
 			} else {
 				// Session expired, redirect to login
 			}
 		} else if (request.getParameter("action").equals("makeComment")) {
-
 			if ((request.getSession()) != null) {
 
 				System.out.println("Log: New comment paremeter content "
@@ -388,6 +373,72 @@ public class CircleServlet extends HttpServlet {
 					writer.close();
 				}
 
+			} else {
+
+			}
+		} else if (request.getParameter("action").equals("likeComment")) {
+			if ((request.getSession()) != null) {
+				// Add a like to the given post for the current user
+
+				System.out.println("Log: New comment like paremeter postId "
+						+ request.getParameter("commentId"));
+				System.out.println("Log: New comment like parameter userId "
+						+ request.getParameter("userId"));
+
+				int commentId = new Integer(request.getParameter("commentId"));
+				int userId = new Integer(request.getParameter("userId"));
+
+				boolean success = CircleDao.likeComment(commentId, userId);
+				String json;
+
+				if (success) {
+					json = new Gson().toJson(new Object() {
+						boolean success = true;
+					});
+				} else {
+					json = new Gson().toJson(new Object() {
+						boolean success = false;
+					});
+				}
+				// JSON response the postDO just committed
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+
+				Writer writer = null;
+
+				try {
+					writer = response.getWriter();
+					writer.write(json);
+				} finally {
+					writer.close();
+				}
+
+			} else {
+				// Session expired, redirect to login
+			}
+		} else if (request.getParameter("action").equals("updatePost")) {
+			if ((request.getSession()) != null) {
+				String content = request.getParameter("content");
+				int postId = new Integer(request.getParameter("postId"));
+
+				boolean success = CircleDao.updatePost(content, postId);
+				String json;
+
+				if (success) {
+					json = new Gson().toJson(new Object() {
+						boolean success = true;
+					});
+				} else {
+					json = new Gson().toJson(new Object() {
+						boolean success = false;
+					});
+				}
+				// JSON response the postDO just committed
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+
+				Writer writer = null;
+
 				try {
 					writer = response.getWriter();
 					writer.write(json);
@@ -398,51 +449,285 @@ public class CircleServlet extends HttpServlet {
 			} else {
 
 			}
-		} else if (request.getParameter("action").equals("likeComment")) {
-			// Add a like to the given post for the current user
+		} else if (request.getParameter("action").equals("deletePost")) {
+			if ((request.getSession()) != null) {
+				int postId = new Integer(request.getParameter("postId"));
 
-			System.out.println("Log: New comment like paremeter postId "
-					+ request.getParameter("commentId"));
-			System.out.println("Log: New comment like parameter userId "
-					+ request.getParameter("userId"));
+				boolean success = CircleDao.deletePost(postId);
+				String json;
 
-			int commentId = new Integer(request.getParameter("commentId"));
-			int userId = new Integer(request.getParameter("userId"));
+				if (success) {
+					json = new Gson().toJson(new Object() {
+						boolean success = true;
+					});
+				} else {
+					json = new Gson().toJson(new Object() {
+						boolean success = false;
+					});
+				}
+				// JSON response the postDO just committed
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
 
-			boolean success = CircleDao.likeComment(commentId, userId);
-			String json;
+				Writer writer = null;
 
-			if (success) {
-				json = new Gson().toJson(new Object() {
-					boolean success = true;
-				});
+				try {
+					writer = response.getWriter();
+					writer.write(json);
+				} finally {
+					writer.close();
+				}
+
 			} else {
-				json = new Gson().toJson(new Object() {
-					boolean success = false;
-				});
+
 			}
-			// JSON response the postDO just committed
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
+		} else if (request.getParameter("action").equals("unlikePost")) {
+			if ((request.getSession()) != null) {
+				int postId = new Integer(request.getParameter("postId"));
+				int userId = new Integer(request.getParameter("userId"));
 
-			Writer writer = null;
+				boolean success = CircleDao.unlikePost(postId, userId);
+				String json;
 
-			try {
-				writer = response.getWriter();
-				writer.write(json);
-			} finally {
-				writer.close();
+				if (success) {
+					json = new Gson().toJson(new Object() {
+						boolean success = true;
+					});
+				} else {
+					json = new Gson().toJson(new Object() {
+						boolean success = false;
+					});
+				}
+				// JSON response the postDO just committed
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+
+				Writer writer = null;
+
+				try {
+					writer = response.getWriter();
+					writer.write(json);
+				} finally {
+					writer.close();
+				}
+
+			} else {
+
 			}
+		} else if (request.getParameter("action").equals("unlikeComment")) {
+			if ((request.getSession()) != null) {
+				int commentId = new Integer(request.getParameter("commentId"));
+				int userId = new Integer(request.getParameter("userId"));
 
-			try {
-				writer = response.getWriter();
-				writer.write(json);
-			} finally {
-				writer.close();
+				boolean success = CircleDao.unlikeComment(commentId, userId);
+				String json;
+
+				if (success) {
+					json = new Gson().toJson(new Object() {
+						boolean success = true;
+					});
+				} else {
+					json = new Gson().toJson(new Object() {
+						boolean success = false;
+					});
+				}
+				// JSON response the postDO just committed
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+
+				Writer writer = null;
+
+				try {
+					writer = response.getWriter();
+					writer.write(json);
+				} finally {
+					writer.close();
+				}
+
+			} else {
+
 			}
+		} else if (request.getParameter("action").equals("updateComment")) {
+			if ((request.getSession()) != null) {
 
-		} else {
-			// Session expired, redirect to login
+				String content = request.getParameter("content");
+				int commentId = new Integer(request.getParameter("commentId"));
+
+				boolean success = CircleDao.updateComment(content, commentId);
+				String json;
+
+				if (success) {
+					json = new Gson().toJson(new Object() {
+						boolean success = true;
+					});
+				} else {
+					json = new Gson().toJson(new Object() {
+						boolean success = false;
+					});
+				}
+				// JSON response the postDO just committed
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+
+				Writer writer = null;
+
+				try {
+					writer = response.getWriter();
+					writer.write(json);
+				} finally {
+					writer.close();
+				}
+
+			} else {
+
+			}
+		} else if (request.getParameter("action").equals("NewCircle")) {
+			if ((request.getSession()) != null) {
+
+				if (request.getParameter("CreateCircle_Owner") != null) {
+
+					String name = request.getParameter("CreateCircle_Name");
+					String type = request.getParameter("CreateCircle_Type");
+					int ownerId = new Integer(
+							request.getParameter("CreateCircle_Owner"));
+
+					// Create the new circle
+					int circleId = CircleDao.createCircle(name, type, ownerId);
+
+					// Current userId from the session
+					int userId = (Integer) request.getSession().getAttribute(
+							"userid");
+
+					// Circle name of circle to view
+					String circleName = name;
+
+					// Circle owned by current user
+					ArrayList<Circle> circleOwner = CircleDao
+							.getCirclesOwner(userId);
+
+					// Circles current user is a member of
+					ArrayList<CircleMember> circleMember = CircleDao
+							.getCircleMember(userId);
+
+					// Posts of circle to view
+					ArrayList<Post> posts = CircleDao
+							.getPosts(circleId, userId);
+
+					// Members of circle to view
+					ArrayList<User> members = CircleDao.circleMembers(circleId);
+
+					// Circle object for circle to view
+					Circle currentCircle = CircleDao.getCircle(circleId);
+
+					// Logging information
+					System.out.println("Log: Adding " + posts.size()
+							+ " posts to circle home");
+
+					// The current circle
+					request.setAttribute("current_circle", currentCircle);
+
+					// Circle to view name
+					request.setAttribute("current_circle_name", circleName);
+
+					// Circle to view id
+					request.setAttribute("current_circle_id", circleId);
+
+					// Members of circle to view
+					request.setAttribute("members", members);
+
+					// Posts for selected circle
+					request.setAttribute("posts", posts);
+
+					// Circles the current user is associated with through
+					// ownership
+					request.setAttribute("owner", circleOwner);
+
+					// Circles the current user is associated with through
+					// membership
+					request.setAttribute("member", circleMember);
+
+					// Circle is owned by current user
+					request.setAttribute("circle_owner", true);
+
+					// Redirect back to circle.jsp, circle home
+					request.getRequestDispatcher("/View/Circle.jsp").forward(
+							request, response);
+				} else {
+					// Redirect back to circle.jsp, circle home
+					request.getRequestDispatcher("home.jsp").forward(request,
+							response);
+				}
+
+			} else {
+
+			}
+		} else if (request.getParameter("action").equals("DeleteCircle")) {
+			if ((request.getSession()) != null) {
+
+				int circleId = new Integer(request.getParameter("circleId"));
+
+				boolean success = CircleDao.deleteCircle(circleId);
+
+				String json;
+
+				if (success) {
+					json = new Gson().toJson(new Object() {
+						boolean success = true;
+					});
+				} else {
+					json = new Gson().toJson(new Object() {
+						boolean success = false;
+					});
+				}
+				// JSON response the postDO just committed
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+
+				Writer writer = null;
+
+				try {
+					writer = response.getWriter();
+					writer.write(json);
+				} finally {
+					writer.close();
+				}
+			} else {
+
+			}
+		} else if (request.getParameter("action").equals("RenameCircle")) {
+			if ((request.getSession()) != null) {
+
+				int circleId = new Integer(request.getParameter("circleId"));
+				String name = request.getParameter("name");
+
+				boolean success = CircleDao.renameCircle(circleId, name);
+
+				String json;
+
+				if (success) {
+					json = new Gson().toJson(new Object() {
+						boolean success = true;
+					});
+				} else {
+					json = new Gson().toJson(new Object() {
+						boolean success = false;
+					});
+				}
+				// JSON response the postDO just committed
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+
+				Writer writer = null;
+
+				try {
+					writer = response.getWriter();
+					writer.write(json);
+				} finally {
+					writer.close();
+				}
+			} else {
+
+			}
 		}
 	}
 
