@@ -39,6 +39,7 @@ public class User {
 	 * @param dateOfBirth
 	 * @param rating
 	 */
+	public User() {}
 	public User(int userId, String firstName, String lastName,
 			String emailAddress, String password, String address, String city,
 			String state, String zipCode, String telephone, String gender,

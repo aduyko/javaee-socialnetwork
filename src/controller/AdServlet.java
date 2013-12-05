@@ -13,13 +13,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.Advertisement;
+import model.Transaction;
 
 /**
  *
  * @author Andy
  */
 public class AdServlet extends HttpServlet {
-
+	
 	/**
 	 * Processes requests for both HTTP
 	 * <code>GET</code> and
@@ -34,23 +36,54 @@ public class AdServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String view;
 		RequestDispatcher dispatcher;
-		
 		String action = request.getParameter("action");
-		
+		if (!action.equals("display")){
+			Integer employeeID = (Integer)request.getSession().getAttribute(SessionConstants.EMPLOYEE_ID);
+			String employeeName = (String)request.getSession().getAttribute(SessionConstants.EMPLOYEE_NAME);
+			String employeeType = (String)request.getSession().getAttribute(SessionConstants.EMPLOYEE_TYPE);
+			if(employeeID == null || employeeName == null || employeeType == null) {
+				dispatcher = getServletContext().getRequestDispatcher(SessionConstants.EMPLOYEE_LOGIN_PAGE_LOCATION);
+				dispatcher.forward(request,response);
+			}
+		}
 		if (action!=null){
-			view = getView(action);
+			view = getView(action,request);
 			request.setAttribute("action", action);
 			request = updateRequest(request,action);
 		} else {
 			view = "/error.jsp";
 		}
-		dispatcher = getServletContext().getRequestDispatcher(view);
-		dispatcher.forward(request,response);
+		if (action.equals("display")) {
+			dispatcher = getServletContext().getRequestDispatcher(view);
+			dispatcher.include(request,response);
+		} else {
+			dispatcher = getServletContext().getRequestDispatcher(view);
+			dispatcher.forward(request,response);
+		}
 	}
-	protected String getView(String action) {
+	protected String getView(String action, HttpServletRequest request) {
 		String view;
 		if (action.equals("display")) {
 			view = "/View/AdDisplay.jsp";
+		} else if (action.equals("portal")) {
+			if (request.getParameter("actor").equals("Manager")) {
+				view = "/View/Manager.jsp";
+			} else { 
+				view = "/View/CustomerRep.jsp";
+			}
+		} else if (action.equals("newAd")) {
+			view = "/View/NewAd.jsp";
+		} else if (action.equals("newTransaction")) {
+			view = "/View/NewTransaction.jsp";
+		} else if (action.equals("postAd") || action.equals("deleteAd") || 
+				action.equals("postTransaction")) {
+			view = "/View/CustomerRep.jsp";
+		} else if (action.equals("allAds")) {
+			view = "/View/AllAds.jsp";
+		} else if (action.equals("salesReport") || action.equals("listTransactions") ||
+				action.equals("listRevenue") || action.equals("listCustomers") ||
+				action.equals("listCompanyItems")) {
+			view = "/View/Manager.jsp";
 		} else {
 			view = "/error.jsp";
 		}
@@ -59,11 +92,105 @@ public class AdServlet extends HttpServlet {
 	protected HttpServletRequest updateRequest(HttpServletRequest request, String action) {
 		if (action.equals("display")) {
 			request = actionDisplay(request);
+		} else if (action.equals("portal")) {
+			if (request.getParameter("actor").equals("Manager")) {
+				request = managerDisplay(request);
+			} else { 
+				request = customerDisplay(request);
+			}
+		} else if (action.equals("postAd")){
+			request = postAdDisplay(request);
+			request = customerDisplay(request);
+		} else if (action.equals("deleteAd")){
+			request = deleteAdDisplay(request);
+			request = customerDisplay(request);
+		} else if (action.equals("postTransaction")){
+			request = postTransactionDisplay(request);
+			request = customerDisplay(request);
+		} else if (action.equals("allAds")){
+			request = allAdsDisplay(request);
+		} else if (action.equals("salesReport")){
+			request = postSalesReportDisplay(request);
+			request = managerDisplay(request);
+		} else if (action.equals("listTransactions")){
+			request = listTransactionsDisplay(request);
+			request = managerDisplay(request);
+		} else if (action.equals("listRevenue")){
+			request = listRevenueDisplay(request);
+			request = managerDisplay(request);
+		} else if (action.equals("listCustomers")){
+			request = listBuyersDisplay(request);
+			request = managerDisplay(request);
+		} else if (action.equals("listCompanyItems")){
+			request = companyAdsDisplay(request);
+			request = managerDisplay(request);
 		}
 		return request;
 	}
 	protected HttpServletRequest actionDisplay(HttpServletRequest request) {
-		request.setAttribute("ads", AdDao.getRandomAds());
+		request.setAttribute("ads", AdDao.getRandomAds(3));
+		return request;
+	}
+	protected HttpServletRequest customerDisplay(HttpServletRequest request) {
+		request.setAttribute("repAds", AdDao.getEmployeeAds((Integer)request.getSession().getAttribute("employeeid")));
+		return request;
+	}
+	protected HttpServletRequest managerDisplay(HttpServletRequest request) {
+		request.setAttribute("bestRep",AdDao.getBestRep());
+		request.setAttribute("bestCustomer",AdDao.getBestUser());
+		request.setAttribute("mostActiveItems",AdDao.getMostActiveAds());
+		return request;
+	}
+	protected HttpServletRequest postAdDisplay(HttpServletRequest request) {
+		Advertisement newAd = new Advertisement();
+		newAd.setAdId(Integer.parseInt(request.getParameter("adId")));
+		newAd.setAvailableUnits(Integer.parseInt(request.getParameter("availableUnits")));
+		newAd.setCompany(request.getParameter("company"));
+		newAd.setContent(request.getParameter("content"));
+		newAd.setEmployee(Integer.parseInt(request.getParameter("employee")));
+		newAd.setItemName(request.getParameter("itemName"));
+		newAd.setType(request.getParameter("type"));
+		newAd.setUnitPrice(Integer.parseInt(request.getParameter("unitPrice")));
+		AdDao.newAd(newAd);
+		return request;
+	}
+	protected HttpServletRequest deleteAdDisplay(HttpServletRequest request) {
+		AdDao.deleteAd(Integer.parseInt(request.getParameter("deleteId")));
+		request.setAttribute("message", "Ad " + Integer.parseInt(request.getParameter("deleteId")) + " Deleted");
+		return request;
+	}
+	protected HttpServletRequest postTransactionDisplay(HttpServletRequest request) {
+		Transaction newTr = new Transaction();
+		newTr.setTranId(Integer.parseInt(request.getParameter("tranId")));
+		newTr.setAd(Integer.parseInt(request.getParameter("adId")));
+		newTr.setNumUnits(Integer.parseInt(request.getParameter("numUnits")));
+		newTr.setAccount(Integer.parseInt(request.getParameter("account")));
+		AdDao.newTransaction(newTr);
+		request.setAttribute("message", "Transaction Recorded");
+		return request;
+	}
+	protected HttpServletRequest listTransactionsDisplay(HttpServletRequest request) {
+		request.setAttribute("transactions",AdDao.getTransactions(request.getParameter("targetName"), Integer.parseInt(request.getParameter("reportType"))));
+		return request;
+	}
+	protected HttpServletRequest listRevenueDisplay(HttpServletRequest request) {
+		request.setAttribute("revenue",AdDao.getRevenue(request.getParameter("targetName"), Integer.parseInt(request.getParameter("reportType"))));
+		return request;
+	}
+	protected HttpServletRequest listBuyersDisplay(HttpServletRequest request) {
+		request.setAttribute("customers",AdDao.getBuyers(request.getParameter("itemName")));
+		return request;
+	}
+	protected HttpServletRequest allAdsDisplay(HttpServletRequest request) {
+		request.setAttribute("allAds", AdDao.getAllAds());
+		return request;
+	}
+	protected HttpServletRequest companyAdsDisplay(HttpServletRequest request) {
+		request.setAttribute("items", AdDao.getCompanyAds(request.getParameter("company")));
+		return request;
+	}
+	protected HttpServletRequest postSalesReportDisplay(HttpServletRequest request) {
+		request.setAttribute("salesReport", AdDao.getSalesReport(Integer.parseInt(request.getParameter("month")), Integer.parseInt(request.getParameter("year"))));
 		return request;
 	}
 	// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

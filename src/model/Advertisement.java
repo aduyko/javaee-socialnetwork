@@ -20,6 +20,18 @@ public class Advertisement implements Serializable{
 	private int availableUnits;
 	
 	public Advertisement(){};
+
+	public Advertisement(int adId, int employee, String type, Date timePosted, String company, String itemName, String content, int unitPrice, int availableUnits) {
+		this.adId = adId;
+		this.employee = employee;
+		this.type = type;
+		this.timePosted = timePosted;
+		this.company = company;
+		this.itemName = itemName;
+		this.content = content;
+		this.unitPrice = unitPrice;
+		this.availableUnits = availableUnits;
+	}
 	
 	public int getAdId() {
 		return adId;
