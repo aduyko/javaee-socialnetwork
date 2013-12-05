@@ -119,7 +119,7 @@ html {
 	<div id="addEditCustomerDiv" style="text-align:left;display:none;">
 		<ul>
 			<li>
-				<b>Edit an customers's account</b>
+				<b>Edit an customers's account (Customer Reps only)</b>
 				<p style="margin-left:10px;">Log into your account <br/>
 				Enter the name of the customer you wish to edit in the search bar on the top of screen<br/>
 				Click on the name of the customer in the list that appears<br/>
@@ -129,7 +129,7 @@ html {
 				</p>
 			</li>
 			<li>
-				<b>Delete a customer's account</b>
+				<b>Delete a customer's account (Customer Reps only)</b>
 				<p style="margin-left:10px;">Log into your account <br/>
 				Enter the name of the customer you wish to delete in the search bar on the top of screen<br/>
 				Click on the name of the customer in the list that appears<br/>
@@ -144,7 +144,7 @@ html {
 	<div id="itemSuggestionDiv" style="text-align:left;display:none;">
 		<ul>
 			<li>
-				<b>Produce item suggestion list</b>
+				<b>Produce item suggestion list (Customer Reps only)</b>
 				<p style="margin-left:10px;">Log into your account <br/>
 				Enter the name of the customer you wish to produce an item suggestion list for into the bar on the top of screen<br/>
 				Click on the name of the customer in the list that appears<br/>
