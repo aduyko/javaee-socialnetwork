@@ -20,24 +20,17 @@
 		%>
     </head>
     <body>
-        <form name="new_ad" action="Advertisement" method="post">
-			<label>Item ID</label>
+        <form name="new_tr" action="Advertisement" method="post">
+			<label>Transaction ID</label>
+			<input type="text" name="tranId" /><br />
+			<label>Ad ID</label>
 			<input type="text" name="adId" /><br />
-			<label>Item Name</label>
-			<input type="text" name="itemName" /><br />
-			<label>Type</label>
-			<input type="text" name="type" /><br />
-			<label>Company</label>
-			<input type="text" name="company" /><br />
-			<label>Description</label>
-			<input type="textarea" name="content" /><br />
-			<label>Price</label>
-			<input type="text" name="unitPrice" /><br />
-			<label>Available Units</label>
-			<input type="text" name="availableUnits" /><br />
+			<label>Number of Units</label>
+			<input type="text" name="numUnits" /><br />
+			<label>Account</label>
+			<input type="text" name="account" /><br />
 			<input type="submit" value="submit" />
-			<input type="hidden" name="employee" value="${employeeid}" />
-			<input type="hidden" name="action" value="postAd" />
+			<input type="hidden" name="action" value="postTransaction" />
 		</form>
     </body>
 </html>

@@ -19,7 +19,17 @@
 		%>
     </head>
     <body>
-		<a href ="Advertisement?action=newAd">New Ad</a>
+		${message}
+		<a href ="Advertisement?action=newAd">New Ad</a><br />
+		<a href ="Advertisement?action=newTransaction">Record Transaction</a><br />
         <h1>Hello ${employeetype}!</h1>
+		<c:forEach items="${repAds}" var="ad">
+			${ad.adId} 
+			<form action="Advertisement" method="post">
+				<input type="hidden" name="action" value="deleteAd" />
+				<input type="submit" value="Delete Ad" />
+				<input type="hidden" name="deleteId" value="${ad.adId}" />
+			</form>
+		</c:forEach>
     </body>
 </html>

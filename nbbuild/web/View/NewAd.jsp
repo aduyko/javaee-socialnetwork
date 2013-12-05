@@ -21,6 +21,8 @@
     </head>
     <body>
         <form name="new_ad" action="Advertisement" method="post">
+			<label>Item ID</label>
+			<input type="text" name="adId" /><br />
 			<label>Item Name</label>
 			<input type="text" name="itemName" /><br />
 			<label>Type</label>
@@ -33,11 +35,9 @@
 			<input type="text" name="unitPrice" /><br />
 			<label>Available Units</label>
 			<input type="text" name="availableUnits" /><br />
-			${message}
-			<%= request.getAttribute("message") %>
 			<input type="submit" value="submit" />
 			<input type="hidden" name="employee" value="${employeeid}" />
-			<input type="hidden" name="action" value="newAd" />
+			<input type="hidden" name="action" value="postAd" />
 		</form>
     </body>
 </html>

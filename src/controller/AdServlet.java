@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Advertisement;
+import model.Transaction;
 
 /**
  *
@@ -70,8 +71,13 @@ public class AdServlet extends HttpServlet {
 			} else { 
 				view = "/View/CustomerRep.jsp";
 			}
-		} else if (action.equals("newAd")){
+		} else if (action.equals("newAd")) {
 			view = "/View/NewAd.jsp";
+		} else if (action.equals("newTransaction")) {
+			view = "/View/NewTransaction.jsp";
+		} else if (action.equals("postAd") || action.equals("deleteAd") || 
+				action.equals("postTransaction")) {
+			view = "/View/CustomerRep.jsp";
 		} else {
 			view = "/error.jsp";
 		}
@@ -86,9 +92,16 @@ public class AdServlet extends HttpServlet {
 			} else { 
 				request = customerDisplay(request);
 			}
-		} else if (action.equals("newAd")){
-			request = newAdDisplay(request);
-		} 
+		} else if (action.equals("postAd")){
+			request = postAdDisplay(request);
+			request = customerDisplay(request);
+		} else if (action.equals("deleteAd")){
+			request = deleteAdDisplay(request);
+			request = customerDisplay(request);
+		} else if (action.equals("postTransaction")){
+			request = postTransactionDisplay(request);
+			request = customerDisplay(request);
+		}
 		return request;
 	}
 	protected HttpServletRequest actionDisplay(HttpServletRequest request) {
@@ -96,8 +109,7 @@ public class AdServlet extends HttpServlet {
 		return request;
 	}
 	protected HttpServletRequest customerDisplay(HttpServletRequest request) {
-
-		request.setAttribute("", AdDao.getRandomAds(3));
+		request.setAttribute("repAds", AdDao.getEmployeeAds((Integer)request.getSession().getAttribute("employeeid")));
 		return request;
 	}
 	protected HttpServletRequest managerDisplay(HttpServletRequest request) {
@@ -105,31 +117,32 @@ public class AdServlet extends HttpServlet {
 		request.setAttribute("", AdDao.getRandomAds(3));
 		return request;
 	}
-	protected HttpServletRequest newAdDisplay(HttpServletRequest request) {
-		if (request.getMethod().equals("POST")) {
-			if (	!request.getParameter("type").isEmpty() &&
-					!request.getParameter("company").isEmpty() &&
-					!request.getParameter("itemName").isEmpty() &&
-					!request.getParameter("content").isEmpty() &&
-					!request.getParameter("unitPrice").isEmpty() &&
-					!request.getParameter("availableUnits").isEmpty()
-				) {
-				Advertisement newAd = new Advertisement();
-				newAd.setAvailableUnits(Integer.parseInt(request.getParameter("availableUnits")));
-				newAd.setCompany(request.getParameter("company"));
-				newAd.setContent(request.getParameter("content"));
-				newAd.setEmployee(Integer.parseInt(request.getParameter("employee")));
-				newAd.setItemName(request.getParameter("itemName"));
-				newAd.setType(request.getParameter("type"));
-				newAd.setUnitPrice(Integer.parseInt(request.getParameter("unitPrice")));
-				request.setAttribute("message", newAd);
-			}
-		}
+	protected HttpServletRequest postAdDisplay(HttpServletRequest request) {
+		Advertisement newAd = new Advertisement();
+		newAd.setAdId(Integer.parseInt(request.getParameter("adId")));
+		newAd.setAvailableUnits(Integer.parseInt(request.getParameter("availableUnits")));
+		newAd.setCompany(request.getParameter("company"));
+		newAd.setContent(request.getParameter("content"));
+		newAd.setEmployee(Integer.parseInt(request.getParameter("employee")));
+		newAd.setItemName(request.getParameter("itemName"));
+		newAd.setType(request.getParameter("type"));
+		newAd.setUnitPrice(Integer.parseInt(request.getParameter("unitPrice")));
+		AdDao.newAd(newAd);
 		return request;
 	}
 	protected HttpServletRequest deleteAdDisplay(HttpServletRequest request) {
 		AdDao.deleteAd(Integer.parseInt(request.getParameter("deleteId")));
-		request.setAttribute("message", "Ad Deleted");
+		request.setAttribute("message", "Ad " + Integer.parseInt(request.getParameter("deleteId")) + " Deleted");
+		return request;
+	}
+	protected HttpServletRequest postTransactionDisplay(HttpServletRequest request) {
+		Transaction newTr = new Transaction();
+		newTr.setTranId(Integer.parseInt(request.getParameter("tranId")));
+		newTr.setAd(Integer.parseInt(request.getParameter("adId")));
+		newTr.setNumUnits(Integer.parseInt(request.getParameter("numUnits")));
+		newTr.setAccount(Integer.parseInt(request.getParameter("account")));
+		AdDao.newTransaction(newTr);
+		request.setAttribute("message", "Transaction Recorded");
 		return request;
 	}
 	// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

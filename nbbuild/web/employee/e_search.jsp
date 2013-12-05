@@ -63,9 +63,12 @@
 							
 				<h1 style="text-align: center;"> Search Results </h1>
 				<hr />
-				<h3>Users</h3>
-			
 				<% 
+					if("Customer Representative".equals(employeeType)) {
+				%>
+					<h3>Users</h3>
+				<% 
+					}
 					String searchQuery = request.getParameter("search");
 					Connection conn = null;
 					try {
@@ -86,7 +89,7 @@
 						conn = java.sql.DriverManager.getConnection(Database.DATABASE_URL, sysprops);
 						Statement stat = conn.createStatement();
 						ResultSet result = stat.executeQuery(query);
-						if(result.next()) {
+						if(result.next() &&"Customer Representative".equals(employeeType)) {
 						    %>
 						    	<table>
 						    <%
@@ -109,7 +112,7 @@
 						    	</table>
 						    <%
 						}
-						else {
+						else if("Customer Representative".equals(employeeType)) {
 						 %>
 						   	<h4 style="margin-left: 50px;"> None </h4>
 						<%	    
