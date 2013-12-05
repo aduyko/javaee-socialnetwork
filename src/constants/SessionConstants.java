@@ -91,6 +91,10 @@ public class SessionConstants {
     public static final String DELETE_EMPLOYEE_LOCATION = PRE + "/servlets/delete_employee.jsp";
     // Used for redirecting to programmers guide
     public static final String PROGRAMMERS_GUIDE_LOCATION = PRE + "/ProgrammersGuide/programmersGuide.jsp";
+    // Used for redirecting to Customer mailing list page
+    public static final String CUSTOMER_MAILING_LIST_LOCATION = PRE + "/employee/e_cust_mailing_list.jsp";
+    // Used for redirecting to the best seller list for items
+    public static final String BEST_SELLER_LIST = PRE + "/best_seller_list.jsp";
     // Used for redirecting to user help menu
     public static final String USER_HELP_MENU_LOCATION = PRE + "/help_menu.jsp";
     // Used for redirectin to employee help menu

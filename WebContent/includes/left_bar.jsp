@@ -8,6 +8,7 @@
 		<span class="Username" style="color: #00a; font-weight: bold;">
 			</span>
 	</div>
+	<a href="<%=SessionConstants.BEST_SELLER_LIST%>">Best Seller List</a>
 
 	<div class="CirclesListOwner">
 		<span class="ListTitle">Circle Owner</span>

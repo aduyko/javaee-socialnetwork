@@ -76,7 +76,7 @@ html {
 			$('#showCurrentCircle').show();
 			$('#currentCircleDiv').fadeOut();
 		});
-		////
+		
 		$('#showAccounts').click(function(){
 			$('#hideAccounts').show();
 			$('#showAccounts').hide();
@@ -87,6 +87,18 @@ html {
 			$('#hideAccounts').hide();
 			$('#showAccounts').show();
 			$('#accountsDiv').fadeOut();
+		});
+		
+		$('#showBestSeller').click(function(){
+			$('#hideBestSeller').show();
+			$('#showBestSeller').hide();
+			$('#bestSellerDiv').fadeIn();
+		});
+		
+		$('#hideBestSeller').click(function(){
+			$('#hideBestSeller').hide();
+			$('#showBestSeller').show();
+			$('#bestSellerDiv').fadeOut();
 		});
 		
 		
@@ -186,7 +198,7 @@ html {
 			<li>
 				<b>List your current circles</b>
 				<p style="margin-left:10px;">Log into your account <br/>
-				A list of all of the circle you own and are is in listen on the left side toolbar/>
+				A list of all of the circle you own and are is in listen on the left side toolbar <br />
 				</p>
 			</li>
 			<li>
@@ -210,6 +222,21 @@ html {
 				<p style="margin-left:10px;">Log into your account <br/>
 				Scroll to the bottom of your home page to view a list of all of your accounts <br />
 				Clicking on the + button next to an account will display that accounts purchase history <br />
+				</p>
+			</li>
+		</ul>
+	</div>
+
+	<div style="margin-top:20px">
+		<h3><a id="showBestSeller" class="button">+</a><a id="hideBestSeller" style="display:none;" class="button">-</a>View top 10 best selling items</h3>
+	</div>
+	<div id="bestSellerDiv" style="text-align:left;display:none;">
+		<ul>
+			<li>
+				<b>View top 10 best selling items</b>
+				<p style="margin-left:10px;">Log into your account <br/>
+				Click the best selling items link on the toolbar on the left side of the screen<br />
+				A list of the top 10 best selling items will be displayed on the page<br />
 				</p>
 			</li>
 		</ul>
