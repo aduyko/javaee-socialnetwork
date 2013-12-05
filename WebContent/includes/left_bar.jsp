@@ -10,6 +10,6 @@
 	</div>
 	<a href="<%=SessionConstants.BEST_SELLER_LIST%>">Best Seller List</a>
 	<br />
-	<a href="/cse-305/CircleServlet?method=post">My Circles</a>
+	<a href="/cse-305/Circle?action=home">My Circles</a>
 
 </div>
