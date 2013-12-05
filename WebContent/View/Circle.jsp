@@ -36,9 +36,10 @@
 </head>
 
 <body>
+	<!-- 
 	<div class="CircleHeader">
-
-		<div class="CircleSearch">
+	
+			<div class="CircleSearch">
 			<form class="form-search input-group CircleSearchForm">
 				<div style="padding: 3px;" class="CircleSearchFormDiv">
 					<span class="CircleSearchLabel">Fb+</span> <input type="text"
@@ -47,7 +48,7 @@
 					<button type="submit" class="submitCircleSearch"
 						style="padding: 5px;">Search</button>
 				</div>
-			</form>
+			</form> 
 
 			<div class="Logout" style="float: right;">
 				<a href="#" style="font-size: 16px;">Logout</a>
@@ -57,6 +58,8 @@
 
 		<hr />
 	</div>
+	-->
+	<jsp:include page="../includes/header.jsp" />
 
 	<div class="CircleSideBarLeft" style="margin-bottom: 30px;">
 
